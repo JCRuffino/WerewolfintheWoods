@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Werewolf in the Woods</title>
+<link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+<!-- HOME -->
+<div id="screen-home" class="screen active">
+  <div class="home-logo">🌲</div>
+  <h1 class="home-title">Werewolf<br>in the Woods</h1>
+  <p class="home-sub">A companion for the night</p>
+  <div class="home-buttons">
+    <button class="btn btn-primary btn-full" onclick="startNewGame()">🎮 New Game</button>
+    <button id="btn-continue" class="btn btn-secondary btn-full" style="display:none" onclick="continueGame()">▶ Continue Game</button>
+  </div>
+</div>
+
+<!-- PLAYERS -->
+<div id="screen-players" class="screen">
+  <h2>👥 Enter Players</h2>
+  <p class="subtitle">Add players in the order they're standing. Max 18.</p>
+  <div class="add-row mt-16">
+    <input type="text" id="player-input" placeholder="Player name…" maxlength="24"
+           onkeydown="if(event.key==='Enter')addPlayer()" />
+    <button class="btn btn-primary" onclick="addPlayer()">Add</button>
+  </div>
+  <div class="player-list" id="player-list"></div>
+  <div id="select-roles-wrap" style="display:none; margin-top:auto;">
+    <button class="btn btn-success btn-full" onclick="goToMonster()">Select Roles →</button>
+  </div>
+  <div class="nav-row" style="padding-top:12px;">
+    <button class="btn btn-ghost-style" onclick="showScreen('screen-home')">← Home</button>
+  </div>
+</div>
+
+<!-- MONSTER -->
+<div id="screen-monster" class="screen">
+  <div class="counter-badge" id="counter-monster">0/0</div>
+  <h2 class="mt-16">🐺 Choose Monster</h2>
+  <p class="subtitle">Select one monster type and how many are in the game.</p>
+  <div class="role-scroll">
+    <div class="role-grid" id="monster-grid"></div>
+    <div id="monster-count-area" style="display:none;">
+      <div class="selected-panel" id="monster-selected-panel"></div>
+      <div class="count-controls">
+        <button class="count-btn" id="monster-dec" onclick="changeCount('monster',-1)">−</button>
+        <span class="count-val" id="monster-count-val">1</span>
+        <button class="count-btn" id="monster-inc" onclick="changeCount('monster',1)">+</button>
+      </div>
+    </div>
+  </div>
+  <div class="nav-row">
+    <button class="btn btn-ghost-style" onclick="goBackToPlayers()">← Back</button>
+    <button class="btn btn-primary" id="btn-monster-next" disabled onclick="goToMinion()">Next →</button>
+  </div>
+</div>
+
+<!-- MINION -->
+<div id="screen-minion" class="screen">
+  <div class="counter-badge" id="counter-minion">0/0</div>
+  <h2 class="mt-16">🕸️ Choose Minion</h2>
+  <p class="subtitle">Select one or more minion types, or skip if none.</p>
+  <span class="optional-hint">Optional — skip with Next →</span>
+  <div class="role-scroll">
+    <div class="role-grid" id="minion-grid"></div>
+  </div>
+  <div class="nav-row">
+    <button class="btn btn-ghost-style" onclick="goBackToPlayers()">← Back</button>
+    <button class="btn btn-primary" id="btn-minion-next" onclick="goToOutcast()">Next →</button>
+  </div>
+</div>
+
+<!-- OUTCAST -->
+<div id="screen-outcast" class="screen">
+  <div class="counter-badge" id="counter-outcast">0/0</div>
+  <h2 class="mt-16">🔥 Choose Outcast</h2>
+  <p class="subtitle">Select one or more outcast types, or skip if none.</p>
+  <span class="optional-hint">Optional — skip with Next →</span>
+  <div class="role-scroll">
+    <div class="role-grid" id="outcast-grid"></div>
+  </div>
+  <div class="nav-row">
+    <button class="btn btn-ghost-style" onclick="goBackToPlayers()">← Back</button>
+    <button class="btn btn-primary" id="btn-outcast-next" onclick="goToVillager()">Next →</button>
+  </div>
+</div>
+
+
+<!-- VILLAGER -->
+<div id="screen-villager" class="screen">
+  <div class="counter-badge" id="counter-villager">0/0</div>
+  <h2 class="mt-16">🏡 Choose Villagers</h2>
+  <p class="subtitle">Select one or more villager roles and set each count.</p>
+  <div class="role-scroll">
+    <div class="role-grid" id="villager-grid"></div>
+  </div>
+  <div class="nav-row">
+    <button class="btn btn-ghost-style" onclick="goBackToPlayers()">← Back</button>
+    <button class="btn btn-primary" id="btn-villager-next" disabled onclick="goToSummary()">Next →</button>
+  </div>
+</div>
+
+<!-- SUMMARY -->
+<div id="screen-summary" class="screen">
+  <h2>📋 Role Summary</h2>
+  <p class="subtitle" id="summary-subtitle"></p>
+  <div class="summary-list" id="summary-list"></div>
+  <div class="nav-row">
+    <button class="btn btn-ghost-style" onclick="goBackToPlayers()">← Back</button>
+    <button class="btn btn-success" onclick="assignRoles()">Assign Roles →</button>
+  </div>
+</div>
+
+<!-- SHOW ROLES -->
+<div id="screen-showroles" class="screen">
+  <h2>🎭 Player Roles</h2>
+  <p class="subtitle">Tap a player to reveal their role privately.</p>
+  <div class="show-roles-list" id="show-roles-list"></div>
+  <div class="nav-row">
+    <button class="btn btn-ghost-style" onclick="showScreen('screen-summary')">← Back</button>
+    <button class="btn btn-primary" onclick="openStartModal()">🌙 Start Game</button>
+  </div>
+</div>
+
+<!-- REVEAL -->
+<div id="screen-reveal" class="screen">
+  <div class="reveal-icon"   id="reveal-icon">🌲</div>
+  <div class="reveal-player" id="reveal-player"></div>
+  <div class="reveal-role"   id="reveal-role"></div>
+  <div class="reveal-cat"    id="reveal-cat"></div>
+  <button class="btn btn-ghost-style mt-auto" style="width:100%;max-width:320px;"
+          onclick="showScreen('screen-showroles')">← Back</button>
+</div>
+
+<!-- GAME -->
+<div id="screen-game" class="screen">
+  <div class="phase-label night" id="phase-label">🌙 Night 1</div>
+  <div class="round-label" id="round-label">Round 1</div>
+  <div class="token-size-controls">
+    <button class="tsb" onclick="changeTokenSize(-4)">−</button>
+    <span class="tsc-label" id="tsc-label">Size</span>
+    <button class="tsb" onclick="changeTokenSize(4)">+</button>
+  </div>
+  <div class="arena" id="arena"></div>
+  <div class="game-bottom" id="game-bottom">
+    <button class="night-phase-btn" id="btn-night-phase" onclick="openNightCarousel()">🌙 Night Phase</button>
+    <div class="night-carousel" id="night-carousel">
+      <div class="carousel-dots" id="carousel-dots"></div>
+      <div class="carousel-card">
+        <div class="cc-icon"  id="cc-icon">😴</div>
+        <div class="cc-title" id="cc-title">Put Players to Sleep</div>
+        <div class="cc-desc"  id="cc-desc">Ask all players to close their eyes and put their heads down.</div>
+        <div class="cc-farmer-reminder" id="cc-farmer-reminder" style="display:none"></div>
+      </div>
+      <div class="carousel-nav" id="carousel-nav">
+        <button class="btn btn-ghost-style" id="carousel-prev" onclick="carouselPrev()">← Prev</button>
+        <button class="btn btn-primary"     id="carousel-next" onclick="carouselNext()">Next →</button>
+      </div>
+      <button class="wake-btn" id="wake-btn" style="display:none" onclick="endNightPhase()">☀️ Wake Players Up</button>
+    </div>
+    <div class="day-bottom" id="day-bottom">
+  <div id="timer-wrap" style="display:none;">
+    <div class="timer-display" id="timer-display">6:00</div>
+    <div class="timer-label" id="timer-label">Day Phase Timer</div>
+  </div>
+<div class="timer-controls" id="timer-controls" style="display:none;">
+  <button class="btn btn-secondary" id="pause-btn" onclick="pauseTimer()">⏸ Pause</button>
+  <button class="btn btn-secondary" onclick="resetTimer()">↺ Reset</button>
+  <button class="btn btn-secondary" onclick="completeTimer()">✓ Complete</button>
+</div>
+  <div class="extra-timers" id="extra-timers" style="display:none;">
+    <button class="extra-timer-btn" onclick="startExtraTimer(120)">⏱ 2 Min Timer</button>
+    <button class="extra-timer-btn" onclick="startExtraTimer(60)">⏱ 1 Min Timer</button>
+  </div>
+  <button class="start-day-btn" id="start-day-btn" onclick="startDayTimer()">☀️ Start Day</button>
+  <button class="night-phase-trigger" onclick="triggerNextNight()">🌙 Begin Night Phase</button>
+</div>
+  </div>
+</div>
+
+
+<!-- MODAL — start game -->
+<div class="modal-overlay" id="modal-start">
+  <div class="modal-box">
+    <h3>🌙 Start the Night?</h3>
+    <p>All players know their roles?</p>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeStartModal()">No</button>
+      <button class="btn btn-primary"   onclick="confirmStartGame()">Yes</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL — player management -->
+<div class="modal-overlay" id="modal-player">
+  <div class="player-modal-box">
+    <div class="pm-header">
+      <span class="pm-icon" id="pm-icon">🧛</span>
+      <div class="pm-name"  id="pm-name">Player</div>
+      <span class="pm-status-badge alive" id="pm-status-badge">Alive</span>
+    </div>
+    <div class="pm-role-section">
+      <button class="pm-role-toggle" id="pm-role-toggle" onclick="toggleRoleReveal()">
+        <span>👁 Show Role Info</span>
+        <span class="toggle-arrow">▼</span>
+      </button>
+      <div class="pm-role-reveal" id="pm-role-reveal">
+        <div class="pr-icon" id="pm-role-icon">🧛</div>
+        <div class="pr-name" id="pm-role-name">Vampire</div>
+        <div class="pr-cat"  id="pm-role-cat">Monster</div>
+        <div class="pm-role-history" id="pm-role-history"></div>
+      </div>
+    </div>
+    <div class="pm-actions">
+      <button class="pm-action-btn danger" id="pm-toggle-status" onclick="togglePlayerStatus()">
+        <span class="pab-icon">👻</span>
+        <div>
+          <div class="pab-label" id="pm-toggle-label">Make Ghost</div>
+          <div class="pab-sub">Remove from active play</div>
+        </div>
+      </button>
+      <button class="pm-action-btn" id="pm-monk-protect" onclick="toggleMonkProtection()" style="display:none">
+        <span class="pab-icon">😇</span>
+        <div>
+          <div class="pab-label" id="pm-monk-label">Mark as Monk Protected</div>
+          <div class="pab-sub">Survives their first execution</div>
+        </div>
+      </button>
+      <button class="pm-action-btn" id="pm-farmer-select" onclick="openFarmerTargetPicker()" style="display:none">
+        <span class="pab-icon">🌾</span>
+        <div>
+          <div class="pab-label" id="pm-farmer-label">Select Farmer Target</div>
+          <div class="pab-sub">Choose a player to watch</div>
+        </div>
+      </button>
+      <button class="pm-action-btn" id="pm-knight-select" onclick="openKnightTargetPicker()" style="display:none">
+        <span class="pab-icon">⚔️</span>
+        <div>
+          <div class="pab-label" id="pm-knight-label">Set Knight Target</div>
+          <div class="pab-sub">Choose a player to watch</div>
+        </div>
+      </button>
+      <button class="pm-action-btn" id="pm-tax-target" onclick="openTaxCollectorPicker(activePlayerIndex)" style="display:none">
+  <span class="pab-icon">💰</span>
+  <div>
+    <div class="pab-label" id="pm-tax-label">Set Target</div>
+    <div class="pab-sub">Currently: None</div>
+  </div>
+</button>
+
+<button class="pm-action-btn" id="pm-weaver-assign" onclick="openWeaverPicker(activePlayerIndex)" style="display:none">
+  <span class="pab-icon">🕸️</span>
+  <div>
+    <div class="pab-label">Assign Weaver Info</div>
+    <div class="pab-sub">Show roles not in game</div>
+  </div>
+</button>
+<button class="pm-action-btn" id="pm-matchmaker-set" onclick="openMatchmakerPicker(activePlayerIndex)" style="display:none">
+  <span class="pab-icon">💘</span>
+  <div>
+    <div class="pab-label">Set Lovers</div>
+    <div class="pab-sub">No lovers set</div>
+  </div>
+</button>
+
+<button class="pm-action-btn" id="pm-quarantine" onclick="toggleQuarantine(activePlayerIndex)" style="display:none">
+  <span class="pab-icon">🔒</span>
+  <div>
+    <div class="pab-label" id="pm-quarantine-label">Quarantine Player</div>
+    <div class="pab-sub">Add grey quarantine overlay</div>
+  </div>
+</button>
+
+
+<button class="pm-action-btn danger" id="pm-kill" onclick="openKillModal(activePlayerIndex)" style="display:none">
+  <span class="pab-icon">💀</span>
+  <div>
+    <div class="pab-label">Mark as Dead</div>
+    <div class="pab-sub">Choose killed or executed</div>
+  </div>
+</button>
+
+    </div>
+    <button class="pm-close-btn" onclick="closePlayerModal()">Close</button>
+  </div>
+</div>
+
+<!-- MODAL — farmer target picker -->
+<div class="modal-overlay" id="modal-farmer-picker">
+  <div class="modal-box farmer-picker-box">
+    <h3>🌾 Farmer Watches…</h3>
+    <p>Choose a living player for this Farmer to watch.</p>
+    <div class="farmer-picker-list" id="farmer-picker-list"></div>
+    <button class="btn btn-ghost-style btn-full" style="margin-top:12px"
+            onclick="closeFarmerTargetPicker()">Cancel</button>
+  </div>
+</div>
+
+<!-- Reminder popup -->
+<div class="modal-overlay" id="reminder-overlay">
+  <div class="modal-box">
+    <h3 id="reminder-title">Reminder</h3>
+    <p  id="reminder-message"></p>
+    <div class="modal-actions">
+      <button class="btn btn-primary" id="reminder-ok-btn"
+        onclick="document.getElementById('reminder-overlay').classList.remove('open')">
+        OK
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Kill / Execute modal -->
+<div class="modal-overlay" id="kill-modal-overlay">
+  <div class="modal-box">
+    <h3>How did <span id="kill-modal-name"></span> die?</h3>
+    <p id="kill-reminder" style="display:none; color:#f5a623; margin-bottom:12px;"></p>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" id="kill-btn-execute">⚖️ Executed</button>
+      <button class="btn btn-primary"   id="kill-btn-kill">💀 Killed</button>
+    </div>
+    <button class="btn btn-ghost-style btn-full" style="margin-top:10px"
+      onclick="document.getElementById('kill-modal-overlay').classList.remove('open')">
+      Cancel
+    </button>
+  </div>
+</div>
+
+<!-- Tax Collector picker -->
+<div class="modal-overlay" id="tax-picker-overlay">
+  <div class="modal-box farmer-picker-box">
+    <h3>💰 Tax Collector Target</h3>
+    <p>Choose the player this Tax Collector is watching.</p>
+    <div class="farmer-picker-list" id="tax-picker-list"></div>
+    <button class="btn btn-ghost-style btn-full" style="margin-top:12px"
+      onclick="document.getElementById('tax-picker-overlay').classList.remove('open')">
+      Cancel
+    </button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-knight-picker">
+  <div class="modal-box farmer-picker-box">
+    <h3>⚔️ Knight Target</h3>
+    <p>Choose the player this Knight is watching.</p>
+    <div class="farmer-picker-list" id="knight-picker-list"></div>
+    <button class="btn btn-ghost-style btn-full" style="margin-top:12px"
+      onclick="document.getElementById('modal-knight-picker').classList.remove('open')">
+      Cancel
+    </button>
+  </div>
+</div>
+
+<!-- Weaver picker -->
+<div class="modal-overlay" id="weaver-picker-overlay">
+  <div class="modal-box farmer-picker-box">
+    <h3>🕸️ Weaver Info</h3>
+    <p>Select one monster and one minion not in the game.</p>
+    <div class="farmer-picker-list" id="weaver-picker-list"></div>
+    <button class="btn btn-primary btn-full" id="weaver-confirm-btn"
+      style="margin-top:12px" disabled>Show to Weaver</button>
+    <button class="btn btn-ghost-style btn-full" style="margin-top:8px"
+      onclick="document.getElementById('weaver-picker-overlay').classList.remove('open')">
+      Cancel
+    </button>
+  </div>
+</div>
+
+<!-- Weaver full-screen reveal -->
+<div class="modal-overlay" id="weaver-reveal-overlay" style="background:rgba(0,0,0,.97)">
+  <div class="weaver-reveal-box" onclick="document.getElementById('weaver-reveal-overlay').classList.remove('open')">
+    <div class="wr-label">Not in this game:</div>
+    <div class="wr-role">
+      <div class="wr-icon" id="wr-monster-icon"></div>
+      <div class="wr-name" id="wr-monster-name"></div>
+    </div>
+    <div class="wr-divider">and</div>
+    <div class="wr-role">
+      <div class="wr-icon" id="wr-minion-icon"></div>
+      <div class="wr-name" id="wr-minion-name"></div>
+    </div>
+    <div class="wr-tap">Tap anywhere to dismiss</div>
+  </div>
+</div>
+
+<!-- Matchmaker picker -->
+<div class="modal-overlay" id="matchmaker-picker-overlay">
+  <div class="modal-box farmer-picker-box">
+    <h3>💘 Set Lovers</h3>
+    <p>Choose two players to become lovers.</p>
+    <div class="farmer-picker-list" id="matchmaker-picker-list"></div>
+    <button class="btn btn-primary btn-full" id="matchmaker-confirm-btn"
+      style="margin-top:12px" disabled>Confirm Lovers</button>
+    <button class="btn btn-ghost-style btn-full" style="margin-top:8px"
+      onclick="document.getElementById('matchmaker-picker-overlay').classList.remove('open')">
+      Cancel
+    </button>
+  </div>
+</div>
+
+<script src="js/storage.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/data.js"></script>
+<script src="js/state.js"></script>
+<script src="js/setup.js"></script>
+<script src="js/game.js"></script>
+<script src="js/player.js"></script>
+</body>
+</html>
+
