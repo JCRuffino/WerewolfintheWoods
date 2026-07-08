@@ -67,6 +67,13 @@ function renderArena() {
     nullifierWatching[targetIdx] = true;
   });
 
+  const knightWatching = {};
+  Object.entries(state.knightTargets).forEach(([knightIdx, targetIdx]) => {
+    const knight = state.assigned[knightIdx];
+    if (!knight || knight.alive === false) return;
+    knightWatching[targetIdx] = true;
+  });
+
   requestAnimationFrame(() => {
     const W  = arena.offsetWidth  || window.innerWidth;
     const H  = arena.offsetHeight || 300;
@@ -88,11 +95,13 @@ function renderArena() {
 
       const isGhost         = p.alive === false;
       const status          = isGhost ? 'ghost' : 'alive';
-      const isMonkProtected = !!monkWatching[i];
-      const isNullified     = !!nullifierWatching[i];
-      const farmers         = farmerWatching[i] || [];
-      const isFarmerWatched = farmers.length > 0;
-      const isQuarantined   = !!state.quarantined[i];
+      const isMonkProtected   = !!monkWatching[i];
+      const isNullified       = !!nullifierWatching[i];
+      const farmers           = farmerWatching[i] || [];
+      const isFarmerWatched   = farmers.length > 0;
+      const isQuarantined     = !!state.quarantined[i];
+      const isKnightProtected = !!knightWatching[i] && !isGhost;
+      const isLover           = state.lovers.includes(i);
 
       let teamClass = 'team-good';
       if (p.cat === 'Monster' || p.cat === 'Minion') teamClass = 'team-evil';
@@ -116,6 +125,10 @@ function renderArena() {
       token.style.setProperty('--token-size', tokenSize + 'px');
       token.style.setProperty('--token-font', (tokenSize * 0.58) + 'px');
 
+      const heartIcon = isLover           ? '<span class="token-heart-icon">💘</span>' : '';
+      const swordIcon = isKnightProtected ? '<span class="token-sword-icon">⚔️</span>' : '';
+      const nameHtml  = heartIcon + swordIcon + escHtml(p.player) + swordIcon + heartIcon;
+
       token.innerHTML =
         '<div class="token-dot">' +
           p.icon +
@@ -125,7 +138,7 @@ function renderArena() {
           (isNullified     && !isGhost ? '<span class="token-nullifier-pip">🔮</span>' : '') +
           '<span class="token-quarantine"></span>' +
         '</div>' +
-        '<div class="token-name">' + escHtml(p.player) + '</div>' +
+        '<div class="token-name">' + nameHtml + '</div>' +
         farmerLabel;
 
       token.onclick = () => openPlayerModal(i);

@@ -213,15 +213,23 @@
         <div class="pr-icon" id="pm-role-icon">🧛</div>
         <div class="pr-name" id="pm-role-name">Vampire</div>
         <div class="pr-cat"  id="pm-role-cat">Monster</div>
+        <div class="pr-original" id="pm-role-original" style="display:none"></div>
         <div class="pm-role-history" id="pm-role-history"></div>
       </div>
     </div>
     <div class="pm-actions">
-      <button class="pm-action-btn danger" id="pm-toggle-status" onclick="togglePlayerStatus()">
+      <button class="pm-action-btn" id="pm-toggle-status" onclick="togglePlayerStatus()" style="display:none">
         <span class="pab-icon">👻</span>
         <div>
-          <div class="pab-label" id="pm-toggle-label">Make Ghost</div>
-          <div class="pab-sub">Remove from active play</div>
+          <div class="pab-label" id="pm-toggle-label">Restore to Alive</div>
+          <div class="pab-sub">Bring back into active play</div>
+        </div>
+      </button>
+      <button class="pm-action-btn" id="pm-change-character" onclick="openChangeCharacterPicker(activePlayerIndex)" style="display:none">
+        <span class="pab-icon">🔄</span>
+        <div>
+          <div class="pab-label">Change Character</div>
+          <div class="pab-sub">Assign a new role mid-game</div>
         </div>
       </button>
   <button class="pm-action-btn" id="pm-monk-protect" onclick="openMonkTargetPicker()" style="display:none">
@@ -432,6 +440,19 @@
       style="margin-top:12px" disabled>Confirm Lovers</button>
     <button class="btn btn-ghost-style btn-full" style="margin-top:8px"
       onclick="document.getElementById('matchmaker-picker-overlay').classList.remove('open')">
+      Cancel
+    </button>
+  </div>
+</div>
+
+<!-- Change Character picker -->
+<div class="modal-overlay" id="change-character-overlay">
+  <div class="modal-box farmer-picker-box">
+    <h3>🔄 Change Character</h3>
+    <p>Select this player's new role.</p>
+    <div class="farmer-picker-list" id="change-character-list"></div>
+    <button class="btn btn-ghost-style btn-full" style="margin-top:12px"
+      onclick="document.getElementById('change-character-overlay').classList.remove('open')">
       Cancel
     </button>
   </div>

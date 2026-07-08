@@ -430,13 +430,6 @@ input[type="text"]::placeholder { color: var(--muted); }
 }
 .player-token.ghost .token-name { opacity: .5; }
 
-/* ── Ghost token appearance ── */
-.player-token.ghost .token-dot {
-  background: rgba(127,140,141,.12);
-  opacity: .65;
-}
-.player-token.ghost .token-name { opacity: .5; }
-
 /* ── Ghost overlay emoji — hidden by default, shown only on ghost ── */
 .token-ghost-overlay {
   display: none;
@@ -455,10 +448,6 @@ input[type="text"]::placeholder { color: var(--muted); }
   filter: drop-shadow(0 1px 4px rgba(245,200,66,.9));
   animation: haloFloat 2.5s ease-in-out infinite;
   z-index: 2;
-}
-@keyframes haloFloat {
-  0%, 100% { transform: translateX(-50%) translateY(0); }
-  50%       { transform: translateX(-50%) translateY(-3px); }
 }
 
 /* ── Farmer pip ── */
@@ -486,43 +475,13 @@ input[type="text"]::placeholder { color: var(--muted); }
   transition: opacity .3s;
 }
 
-.token-halo {
-  position: absolute;
-  top: -20px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: .9rem;
-  line-height: 1;
-  filter: drop-shadow(0 1px 4px rgba(245,200,66,.9));
-  animation: haloFloat 2.5s ease-in-out infinite;
-  z-index: 2;
+.token-heart-icon, .token-sword-icon {
+  font-size: .7rem;
 }
 
 @keyframes haloFloat {
   0%, 100% { transform: translateX(-50%) translateY(0); }
   50%       { transform: translateX(-50%) translateY(-3px); }
-}
-
-.token-farmer-pip {
-  position: absolute;
-  bottom: -20px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: .8rem;
-  line-height: 1;
-  filter: drop-shadow(0 1px 3px rgba(0,0,0,.8));
-  z-index: 2;
-}
-
-.token-farmer-label {
-  font-size: .6rem;
-  color: #7ed957;
-  font-weight: 700;
-  text-align: center;
-  max-width: 70px;
-  line-height: 1.2;
-  text-shadow: 0 1px 4px rgba(0,0,0,.9);
-  margin-top: 8px;
 }
 
 /* ── Game bottom bar ── */
@@ -670,6 +629,7 @@ input[type="text"]::placeholder { color: var(--muted); }
 .pm-role-reveal .pr-icon { font-size: 2rem; margin-bottom: 4px; }
 .pm-role-reveal .pr-name { font-size: 1.1rem; font-weight: 800; color: var(--accent2); }
 .pm-role-reveal .pr-cat  { font-size: .78rem; color: var(--muted); margin-top: 2px; }
+.pm-role-reveal .pr-original { font-size: .78rem; color: #a78bfa; margin-top: 6px; font-weight: 600; }
 
 /* ── Role history ── */
 .pm-role-history {
@@ -845,8 +805,9 @@ input[type="text"]::placeholder { color: var(--muted); }
 
 /* ── Shapeshifter warning on role reveal screen ── */
 .sri-shapeshifter-warning {
-  font-size: .75rem;
+  font-size: 1.5rem;
   color: #a78bfa;
   margin-top: 4px;
   font-weight: 600;
+  display: block;
 }

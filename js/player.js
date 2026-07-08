@@ -22,19 +22,21 @@ function openPlayerModal(i) {
   document.getElementById('pm-role-name').textContent = p.role;
   document.getElementById('pm-role-cat').textContent  = p.cat;
 
+  const originalEl = document.getElementById('pm-role-original');
+  if (p.originalId && p.originalId !== p.id) {
+    originalEl.textContent   = 'Started as ' + p.originalIcon + ' ' + p.originalRole;
+    originalEl.style.display = 'block';
+  } else {
+    originalEl.style.display = 'none';
+  }
+
   renderRoleHistory(i);
 
-  const toggleBtn   = document.getElementById('pm-toggle-status');
-  const toggleLabel = document.getElementById('pm-toggle-label');
-  if (isGhost) {
-    toggleLabel.textContent = 'Restore to Alive';
-    toggleBtn.querySelector('.pab-sub').textContent = 'Bring back into active play';
-    toggleBtn.classList.remove('danger');
-  } else {
-    toggleLabel.textContent = 'Make Ghost';
-    toggleBtn.querySelector('.pab-sub').textContent = 'Remove from active play';
-    toggleBtn.classList.add('danger');
-  }
+  const toggleBtn = document.getElementById('pm-toggle-status');
+  toggleBtn.style.display = isGhost ? 'flex' : 'none';
+
+  const changeCharBtn = document.getElementById('pm-change-character');
+  if (changeCharBtn) changeCharBtn.style.display = isGhost ? 'none' : 'flex';
 
   const quarantineBtn   = document.getElementById('pm-quarantine');
   const quarantineLabel = document.getElementById('pm-quarantine-label');
@@ -221,37 +223,25 @@ function toggleRoleReveal() {
 
 function togglePlayerStatus() {
   if (activePlayerIndex === null) return;
-  const p        = state.assigned[activePlayerIndex];
-  const wasAlive = p.alive !== false;
-  p.alive        = wasAlive ? false : true;
-
-    if (wasAlive && p.id === 'monk') {
-    const target = state.monkProtections[activePlayerIndex];
-    if (target !== undefined) {
-      const targetName = state.assigned[target]?.player;
-      if (targetName) {
-        if (!p.monkProtectedHistory) p.monkProtectedHistory = [];
-        p.monkProtectedHistory.push(targetName);
-      }
-      delete state.monkProtections[activePlayerIndex];
-    }
-  }
-
-  if (wasAlive && p.id === 'farmer') {
-    const target = state.farmerSelections[activePlayerIndex];
-    if (target !== undefined) {
-      const targetName = state.assigned[target]?.player;
-      if (targetName) {
-        if (!p.farmerWatchHistory) p.farmerWatchHistory = [];
-        p.farmerWatchHistory.push(targetName);
-      }
-      delete state.farmerSelections[activePlayerIndex];
-    }
+  const p = state.assigned[activePlayerIndex];
+  if (p.alive === false) {
+    p.alive = true;
+    delete p.deathMethod;
   }
 
   saveState();
   openPlayerModal(activePlayerIndex);
   renderArena();
+}
+
+function openKillModal(idx) {
+  if (idx === null || idx === undefined) return;
+  activePlayerIndex = idx;
+  const p = state.assigned[idx];
+  document.getElementById('kill-modal-name').textContent = p.player;
+  document.getElementById('kill-btn-execute').onclick = () => markPlayerDead(idx, 'executed');
+  document.getElementById('kill-btn-kill').onclick    = () => markPlayerDead(idx, 'killed');
+  document.getElementById('kill-modal-overlay').classList.add('open');
 }
 
 function openMonkTargetPicker() {
@@ -582,6 +572,66 @@ function openMatchmakerPicker(matchmakerIdx) {
     renderArena();
   };
   document.getElementById('matchmaker-picker-overlay').classList.add('open');
+}
+
+function openChangeCharacterPicker(idx) {
+  if (idx === null || idx === undefined) return;
+  activePlayerIndex = idx;
+  const p = state.assigned[idx];
+  const allRoles = [
+    ...ROLES.monster,
+    { id:'lone-wolf', name:'Lone Wolf', icon:'🌕', cat:'Monster' },
+    ...ROLES.minion,
+    ...ROLES.outcast,
+    ...ROLES.villager,
+    { id:'villager',  name:'Villager',  icon:'🏡', cat:'Villager' },
+  ];
+
+  const list = document.getElementById('change-character-list');
+  list.innerHTML = '';
+  allRoles.forEach(role => {
+    const isCurrent = p.id === role.id;
+    const row = document.createElement('button');
+    row.className = 'farmer-pick-row' + (isCurrent ? ' selected' : '');
+    row.innerHTML =
+      '<span class="fp-icon">' + role.icon + '</span>' +
+      '<span class="fp-name">' + escHtml(role.name) + ' — ' + role.cat + '</span>' +
+      (isCurrent ? '<span class="fp-check">✓</span>' : '');
+    row.onclick = () => applyCharacterChange(idx, role);
+    list.appendChild(row);
+  });
+
+  document.getElementById('change-character-overlay').classList.add('open');
+}
+
+function applyCharacterChange(idx, role) {
+  const p = state.assigned[idx];
+  document.getElementById('change-character-overlay').classList.remove('open');
+  if (p.id === role.id) return;
+
+  if (!p.originalId) {
+    p.originalId   = p.id;
+    p.originalRole = p.role;
+    p.originalIcon = p.icon;
+    p.originalCat  = p.cat;
+  }
+
+  // The old role's own target-setting effect stops — it's no longer in the game
+  delete state.monkProtections[idx];
+  delete state.farmerSelections[idx];
+  delete state.knightTargets[idx];
+  delete state.taxCollectorTargets[idx];
+  delete state.nullifierTargets[idx];
+
+  p.id             = role.id;
+  p.role           = role.name;
+  p.icon           = role.icon;
+  p.cat            = role.cat;
+  p.createdOnRound = state.round;
+
+  saveState();
+  openPlayerModal(idx);
+  renderArena();
 }
 
 function markPlayerDead(idx, method) {
