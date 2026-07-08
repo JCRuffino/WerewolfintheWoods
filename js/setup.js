@@ -386,6 +386,7 @@ function goToSummary() {
 function assignRoles() {
   const pool = [];
 
+  // Monster
   const monSel = state.selections.monster;
   if (monSel && monSel.role) {
     for (let i = 0; i < monSel.count; i++)
@@ -395,6 +396,7 @@ function assignRoles() {
   if (state.selections.loneWolf)
     pool.push({ id: 'lone-wolf', role: 'Lone Wolf', icon: '🌕', cat: 'Monster' });
 
+  // Minion + outcast
   ['minion', 'outcast'].forEach(type => {
     const mSel = state.selections[type];
     ROLES[type].forEach(role => {
@@ -404,6 +406,7 @@ function assignRoles() {
     });
   });
 
+  // Villager
   const vSel = state.selections.villager;
   ROLES.villager.forEach(role => {
     if (!vSel[role.id]) return;
@@ -411,9 +414,11 @@ function assignRoles() {
       pool.push({ id: role.id, role: role.name, icon: role.icon, cat: role.cat });
   });
 
+  // Plain villager fill
   while (pool.length < state.players.length)
     pool.push({ id: 'villager', role: 'Villager', icon: '🏡', cat: 'Villager' });
 
+  // Fisher-Yates shuffle
   for (let i = pool.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [pool[i], pool[j]] = [pool[j], pool[i]];
@@ -428,15 +433,22 @@ function assignRoles() {
     alive:  true,
   }));
 
-  saveState();
   renderShowRoles();
   showScreen('screen-showroles');
 }
+
 
 /* ── Show roles ── */
 function renderShowRoles() {
   const list = document.getElementById('show-roles-list');
   list.innerHTML = '';
+      const hasShapeshifter = state.assigned.some(a => a.id === 'shapeshifter');
+    const isEvil = entry.cat === 'Monster' || entry.cat === 'Minion';
+    const isShapeshifter = entry.id === 'shapeshifter';
+    const shapeshifterWarning = (hasShapeshifter && isEvil && !isShapeshifter)
+      ? '<div class="sri-shapeshifter-warning">🌀 A Shapeshifter is in play</div>'
+      : '';
+
   state.assigned.forEach((entry, i) => {
     const div = document.createElement('div');
     div.className = 'show-role-item';
@@ -445,6 +457,7 @@ function renderShowRoles() {
       '<div class="sri-info">' +
         '<div class="sri-player">' + escHtml(entry.player) + '</div>' +
         '<div class="sri-role">Tap to reveal role</div>' +
+                shapeshifterWarning +
       '</div>' +
       '<span class="sri-arrow">›</span>';
     div.onclick = () => revealRole(i);
@@ -471,7 +484,6 @@ function confirmStartGame() {
   state.round = 1;
   state.phase = 'night';
   document.getElementById('btn-continue').style.display = 'flex';
-  saveState();
   initGameScreen();
   showScreen('screen-game');
 }

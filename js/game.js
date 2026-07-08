@@ -53,6 +53,13 @@ function renderArena() {
     farmerWatching[targetIdx].push(farmer.player);
   });
 
+  const monkWatching = {};
+  Object.entries(state.monkProtections).forEach(([monkIdx, targetIdx]) => {
+    const monk = state.assigned[monkIdx];
+    if (!monk || monk.alive === false) return;
+    monkWatching[targetIdx] = true;
+  });
+
   requestAnimationFrame(() => {
     const W  = arena.offsetWidth  || window.innerWidth;
     const H  = arena.offsetHeight || 300;
@@ -74,7 +81,7 @@ function renderArena() {
 
       const isGhost         = p.alive === false;
       const status          = isGhost ? 'ghost' : 'alive';
-      const isMonk          = state.monkProtected === i;
+      const isMonkProtected = !!monkWatching[i];
       const farmers         = farmerWatching[i] || [];
       const isFarmerWatched = farmers.length > 0;
       const isQuarantined   = !!state.quarantined[i];
@@ -91,7 +98,7 @@ function renderArena() {
 
       const token = document.createElement('div');
       token.className = 'player-token ' + status + ' ' + teamClass +
-        (isMonk && !isGhost          ? ' monk-protected' : '') +
+        (isMonkProtected && !isGhost ? ' monk-protected' : '') +
         (isFarmerWatched && !isGhost ? ' farmer-watched' : '') +
         (isQuarantined               ? ' quarantined'    : '');
       token.style.left = x + 'px';
@@ -103,7 +110,7 @@ function renderArena() {
         '<div class="token-dot">' +
           p.icon +
           '<span class="token-ghost-overlay">👻</span>' +
-          (isMonk && !isGhost          ? '<span class="token-halo">😇</span>'       : '') +
+          (isMonkProtected && !isGhost ? '<span class="token-halo">😇</span>'       : '') +
           (isFarmerWatched && !isGhost ? '<span class="token-farmer-pip">🌾</span>' : '') +
           '<span class="token-quarantine"></span>' +
         '</div>' +
@@ -115,6 +122,7 @@ function renderArena() {
     });
   });
 }
+
 
 /* ── Bottom state machine ── */
 function setGameBottomState(stateName) {

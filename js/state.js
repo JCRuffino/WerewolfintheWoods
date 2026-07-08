@@ -5,6 +5,7 @@ let state = {
     minion:   {},
     outcast:  {},
     villager: {},
+    nullifierTargets: {},
     loneWolf: 0,
   },
   assigned: [],
@@ -29,13 +30,14 @@ function resetState() {
     minion:   {},
     outcast:  {},
     villager: {},
+    nullifierTargets: {},
     loneWolf: 0,
   };
   state.assigned             = [];
   state.gameInProgress       = false;
   state.round                = 1;
   state.phase                = 'night';
-  state.monkProtected        = null;
+  state.monkProtections      = {};
   state.farmerSelections     = {};
   state.knightTargets        = {};
   state.knightReminderPending = false;
@@ -43,6 +45,7 @@ function resetState() {
   state.quarantined          = {};
   state.lovers               = [];
   state.weaverAssignments    = {};
+  
 }
 
 

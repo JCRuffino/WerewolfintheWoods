@@ -223,13 +223,13 @@
           <div class="pab-sub">Remove from active play</div>
         </div>
       </button>
-      <button class="pm-action-btn" id="pm-monk-protect" onclick="toggleMonkProtection()" style="display:none">
-        <span class="pab-icon">😇</span>
-        <div>
-          <div class="pab-label" id="pm-monk-label">Mark as Monk Protected</div>
-          <div class="pab-sub">Survives their first execution</div>
-        </div>
-      </button>
+  <button class="pm-action-btn" id="pm-monk-protect" onclick="openMonkTargetPicker()" style="display:none">
+  <span class="pab-icon">😇</span>
+  <div>
+    <div class="pab-label" id="pm-monk-label">Set Monk Protection</div>
+    <div class="pab-sub">Choose a player to protect</div>
+  </div>
+</button>
       <button class="pm-action-btn" id="pm-farmer-select" onclick="openFarmerTargetPicker()" style="display:none">
         <span class="pab-icon">🌾</span>
         <div>
@@ -297,6 +297,18 @@
     <div class="farmer-picker-list" id="farmer-picker-list"></div>
     <button class="btn btn-ghost-style btn-full" style="margin-top:12px"
             onclick="closeFarmerTargetPicker()">Cancel</button>
+  </div>
+</div>
+<!-- Monk target picker -->
+<div class="modal-overlay" id="modal-monk-picker">
+  <div class="modal-box farmer-picker-box">
+    <h3>😇 Monk Protects…</h3>
+    <p>Choose a living player for this Monk to protect.</p>
+    <div class="farmer-picker-list" id="monk-picker-list"></div>
+    <button class="btn btn-ghost-style btn-full" style="margin-top:12px"
+      onclick="document.getElementById('modal-monk-picker').classList.remove('open')">
+      Cancel
+    </button>
   </div>
 </div>
 

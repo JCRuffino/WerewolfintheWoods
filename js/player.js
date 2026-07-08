@@ -46,16 +46,29 @@ function openPlayerModal(i) {
       : 'Add grey quarantine overlay';
   }
 
-  const taxBtn = document.getElementById('pm-tax-target');
+  const taxBtn = document.getElementById('pm-executioner-target');
   if (taxBtn) {
-    if (p.id === 'tax-collector' && !isGhost) {
+    if (p.id === 'executioner' && !isGhost) {
       taxBtn.style.display = 'flex';
       const target     = state.taxCollectorTargets[i];
       const targetName = target !== undefined ? state.assigned[target]?.player : 'None';
-      document.getElementById('pm-tax-label').textContent = 'Set Target';
+      document.getElementById('pm-executioner-label').textContent = 'Set Target';
       taxBtn.querySelector('.pab-sub').textContent = 'Currently: ' + targetName;
     } else {
       taxBtn.style.display = 'none';
+    }
+  }
+
+  const nullifierBtn = document.getElementById('pm-nullifier-select');
+  const isNullifier  = p.id === 'nullifier';
+  if (nullifierBtn) {
+    nullifierBtn.style.display = (isNullifier && !isGhost) ? 'flex' : 'none';
+    if (isNullifier && !isGhost) {
+      const currentTarget = state.nullifierTargets[i];
+      const nullSub = nullifierBtn.querySelector('.pab-sub');
+      nullSub.textContent = currentTarget !== undefined
+        ? 'Currently: ' + state.assigned[currentTarget]?.player
+        : 'No target set';
     }
   }
 
@@ -97,26 +110,27 @@ function openPlayerModal(i) {
     killBtn.style.display = isGhost ? 'none' : 'flex';
   }
 
-  const monkBtn    = document.getElementById('pm-monk-protect');
-  const monkInGame = getRolesInGame().includes('monk');
+    const monkBtn    = document.getElementById('pm-monk-protect');
+  const isMonk     = p.id === 'monk';
   if (monkBtn) {
-    const isMonkPlayer = p.id === 'monk';
-    monkBtn.style.display = (monkInGame && !isMonkPlayer && !isGhost) ? 'flex' : 'none';
-    if (monkInGame && !isMonkPlayer && !isGhost) {
-      const isProtected = state.monkProtected === i;
-      const monkLabel   = document.getElementById('pm-monk-label');
-      const monkSub     = monkBtn.querySelector('.pab-sub');
-      if (isProtected) {
-        monkLabel.textContent = 'Remove Monk Protection';
-        monkSub.textContent   = 'Player is currently protected';
+    monkBtn.style.display = (isMonk && !isGhost) ? 'flex' : 'none';
+    if (isMonk && !isGhost) {
+      const currentTarget = state.monkProtections[i];
+      const monkLabel     = document.getElementById('pm-monk-label');
+      const monkSub       = monkBtn.querySelector('.pab-sub');
+      if (currentTarget !== undefined) {
+        const targetName = state.assigned[currentTarget]?.player;
+        monkLabel.textContent = 'Change Monk Protection';
+        monkSub.textContent   = 'Currently protecting: ' + targetName;
         monkBtn.classList.add('monk-active');
       } else {
-        monkLabel.textContent = 'Mark as Monk Protected';
-        monkSub.textContent   = 'Survives their first execution';
+        monkLabel.textContent = 'Set Monk Protection';
+        monkSub.textContent   = 'Choose a player to protect';
         monkBtn.classList.remove('monk-active');
       }
     }
   }
+
 
   const farmerBtn    = document.getElementById('pm-farmer-select');
   const farmerInGame = getRolesInGame().includes('farmer');
@@ -148,14 +162,15 @@ function renderRoleHistory(i) {
   const historyEl = document.getElementById('pm-role-history');
   const lines     = [];
 
-  if (p.id === 'monk') {
+   if (p.id === 'monk') {
     if (p.monkProtectedHistory && p.monkProtectedHistory.length > 0) {
       p.monkProtectedHistory.forEach(name => {
         lines.push({ icon: '😇', text: 'Protected ' + name, faded: true });
       });
     }
-    if (state.monkProtected !== null && state.monkProtected !== undefined) {
-      const targetName = state.assigned[state.monkProtected]?.player;
+    const currentTarget = state.monkProtections[i];
+    if (currentTarget !== undefined) {
+      const targetName = state.assigned[currentTarget]?.player;
       if (targetName) lines.push({ icon: '😇', text: 'Protecting ' + targetName, faded: false });
     }
   }
@@ -210,13 +225,16 @@ function togglePlayerStatus() {
   const wasAlive = p.alive !== false;
   p.alive        = wasAlive ? false : true;
 
-  if (wasAlive && p.id === 'monk' && state.monkProtected !== null) {
-    const targetName = state.assigned[state.monkProtected]?.player;
-    if (targetName) {
-      if (!p.monkProtectedHistory) p.monkProtectedHistory = [];
-      p.monkProtectedHistory.push(targetName);
+    if (wasAlive && p.id === 'monk') {
+    const target = state.monkProtections[activePlayerIndex];
+    if (target !== undefined) {
+      const targetName = state.assigned[target]?.player;
+      if (targetName) {
+        if (!p.monkProtectedHistory) p.monkProtectedHistory = [];
+        p.monkProtectedHistory.push(targetName);
+      }
+      delete state.monkProtections[activePlayerIndex];
     }
-    state.monkProtected = null;
   }
 
   if (wasAlive && p.id === 'farmer') {
@@ -236,26 +254,74 @@ function togglePlayerStatus() {
   renderArena();
 }
 
-function toggleMonkProtection() {
+function openMonkTargetPicker() {
   if (activePlayerIndex === null) return;
-  if (state.monkProtected === activePlayerIndex) {
-    state.monkProtected = null;
-  } else {
-    if (state.monkProtected !== null) {
-      const monkPlayer = state.assigned.find(p => p.id === 'monk');
-      if (monkPlayer) {
-        const oldTargetName = state.assigned[state.monkProtected]?.player;
-        if (oldTargetName) {
-          if (!monkPlayer.monkProtectedHistory) monkPlayer.monkProtectedHistory = [];
-          monkPlayer.monkProtectedHistory.push(oldTargetName);
-        }
-      }
+  const picker = document.getElementById('modal-monk-picker');
+  const list   = document.getElementById('monk-picker-list');
+  list.innerHTML = '';
+
+  state.assigned.forEach((p, i) => {
+    if (i === activePlayerIndex) return;
+    if (p.alive === false) return;
+    const isCurrentTarget = state.monkProtections[activePlayerIndex] === i;
+    const row = document.createElement('button');
+    row.className = 'farmer-pick-row' + (isCurrentTarget ? ' selected' : '');
+    row.innerHTML =
+      '<span class="fp-icon">' + p.icon + '</span>' +
+      '<span class="fp-name">' + escHtml(p.player) + '</span>' +
+      (isCurrentTarget ? '<span class="fp-check">✓</span>' : '');
+    row.onclick = () => selectMonkTarget(i);
+    list.appendChild(row);
+  });
+
+  picker.classList.add('open');
+}
+
+function selectMonkTarget(targetIndex) {
+  if (activePlayerIndex === null) return;
+  const monk = state.assigned[activePlayerIndex];
+  const prev = state.monkProtections[activePlayerIndex];
+
+  if (prev !== undefined && prev !== targetIndex) {
+    const prevName = state.assigned[prev]?.player;
+    if (prevName) {
+      if (!monk.monkProtectedHistory) monk.monkProtectedHistory = [];
+      monk.monkProtectedHistory.push(prevName);
     }
-    state.monkProtected = activePlayerIndex;
   }
+
+  state.monkProtections[activePlayerIndex] = targetIndex;
   saveState();
+  document.getElementById('modal-monk-picker').classList.remove('open');
   openPlayerModal(activePlayerIndex);
   renderArena();
+}
+function openNullifierPicker(idx) {
+  activePlayerIndex = idx;
+  const list = document.getElementById('nullifier-picker-list');
+  list.innerHTML = '';
+
+  state.assigned.forEach((p, i) => {
+    if (i === idx) return;
+    if (p.alive === false) return;
+    const isCurrent = state.nullifierTargets[idx] === i;
+    const row = document.createElement('button');
+    row.className = 'farmer-pick-row' + (isCurrent ? ' selected' : '');
+    row.innerHTML =
+      '<span class="fp-icon">' + p.icon + '</span>' +
+      '<span class="fp-name">' + escHtml(p.player) + '</span>' +
+      (isCurrent ? '<span class="fp-check">✓</span>' : '');
+    row.onclick = () => {
+      state.nullifierTargets[idx] = i;
+      saveState();
+      document.getElementById('nullifier-picker-overlay').classList.remove('open');
+      openPlayerModal(idx);
+      renderArena();
+    };
+    list.appendChild(row);
+  });
+
+  document.getElementById('nullifier-picker-overlay').classList.add('open');
 }
 
 function openFarmerTargetPicker() {
@@ -342,28 +408,28 @@ function toggleQuarantine(idx) {
     delete state.quarantined[idx];
   } else {
     state.quarantined[idx] = true;
-    checkTaxCollectorReminder(idx);
+    checkExecutionerReminder(idx);
   }
   saveState();
   closePlayerModal();
   renderArena();
 }
 
-function checkTaxCollectorReminder(targetIdx) {
-  const collectors = [];
+function checkExecutionerReminder(targetIdx) {
+  const executioners = [];
   Object.entries(state.taxCollectorTargets).forEach(([collectorIdx, tIdx]) => {
     if (parseInt(tIdx) === targetIdx) {
       const collector = state.assigned[collectorIdx];
       if (collector && collector.alive !== false) {
-        collectors.push(collector.player);
+        executioners.push(collector.player);
       }
     }
   });
-  if (collectors.length > 0) {
+  if (executioners.length > 0) {
     const target = state.assigned[targetIdx];
     showReminder(
-      '💰 Tax Collector Reminder',
-      collectors.join(', ') + ' chose ' + target.player +
+      '⚖️ Executioner Reminder',
+      executioners.join(', ') + ' chose ' + target.player +
       ' — they are now quarantined. Remember to eliminate them before the next night phase.'
     );
   }
@@ -504,34 +570,29 @@ function openMatchmakerPicker(matchmakerIdx) {
   document.getElementById('matchmaker-picker-overlay').classList.add('open');
 }
 
-function openKillModal(idx) {
-  const p = state.assigned[idx];
-  document.getElementById('kill-modal-name').textContent = p.player;
-  document.getElementById('kill-reminder').style.display = 'none';
-
-  document.getElementById('kill-btn-execute').onclick = () => markPlayerDead(idx, 'executed');
-  document.getElementById('kill-btn-kill').onclick    = () => markPlayerDead(idx, 'killed');
-
-  document.getElementById('kill-modal-overlay').classList.add('open');
-}
-
 function markPlayerDead(idx, method) {
-  state.assigned[idx].alive       = false;
-  state.assigned[idx].deathMethod = method;
+  const p = state.assigned[idx];
+  p.alive       = false;
+  p.deathMethod = method;
   delete state.quarantined[idx];
   delete state.taxCollectorTargets[idx];
-  if (state.monkProtected === idx) state.monkProtected = null;
 
-  const p = state.assigned[idx];
-  if (p.id === 'monk' && state.monkProtected !== null) {
-    const targetName = state.assigned[state.monkProtected]?.player;
-    if (targetName) {
-      if (!p.monkProtectedHistory) p.monkProtectedHistory = [];
-      p.monkProtectedHistory.push(targetName);
+  // Monk — save history before deleting
+  if (p.id === 'monk') {
+    const target = state.monkProtections[idx];
+    if (target !== undefined) {
+      const targetName = state.assigned[target]?.player;
+      if (targetName) {
+        if (!p.monkProtectedHistory) p.monkProtectedHistory = [];
+        p.monkProtectedHistory.push(targetName);
+      }
+      delete state.monkProtections[idx];
     }
-    state.monkProtected = null;
+  } else {
+    delete state.monkProtections[idx];
   }
 
+  // Farmer — save history before deleting
   if (p.id === 'farmer') {
     const target = state.farmerSelections[idx];
     if (target !== undefined) {
