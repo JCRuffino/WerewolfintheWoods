@@ -31,6 +31,10 @@ const ROLES = {
   ],
 };
 
+function getRolesInGame() {
+  return state.assigned.map(p => p.id);
+}
+
 function buildNightActions(isFirstNight) {
   const assigned = state.assigned;
 
