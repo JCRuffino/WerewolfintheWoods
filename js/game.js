@@ -350,6 +350,16 @@ function triggerNextNight() {
   saveState();
   updatePhaseLabel();
   setGameBottomState('night-btn');
+
+  if (state.round >= 4) {
+    const livingLiar = state.assigned.find(p => p.alive !== false && p.id === 'liar');
+    if (livingLiar) {
+      showReminder(
+        '🎭 Liar Reminder',
+        livingLiar.player + ' is the Liar and is still alive. Use Change Character to assign them a new role to bluff with.'
+      );
+    }
+  }
 }
 
 function completeTimer() {

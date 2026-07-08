@@ -636,6 +636,47 @@ function applyCharacterChange(idx, role) {
 
 function markPlayerDead(idx, method) {
   const p = state.assigned[idx];
+
+  // Monk protection saves the target from execution
+  if (method === 'executed') {
+    let protectingMonkIdx;
+    Object.entries(state.monkProtections).forEach(([monkIdx, targetIdx]) => {
+      if (parseInt(targetIdx) === idx) protectingMonkIdx = monkIdx;
+    });
+    if (protectingMonkIdx !== undefined) {
+      const monk = state.assigned[protectingMonkIdx];
+      if (monk && monk.alive !== false) {
+        delete state.monkProtections[protectingMonkIdx];
+        saveState();
+        document.getElementById('kill-modal-overlay').classList.remove('open');
+        closePlayerModal();
+        renderArena();
+        showReminder(
+          '😇 Monk Protected!',
+          p.player + ' was Monk protected and did not die. They lose their protection.'
+        );
+        return;
+      }
+    }
+  }
+
+  // Tanner secretly wins if executed — they don't die, they get a new role
+  if (method === 'executed' && p.id === 'tanner') {
+    document.getElementById('kill-modal-overlay').classList.remove('open');
+    closePlayerModal();
+    showReminder(
+      '🪵 Tanner Executed!',
+      p.player + ' is the Tanner and does not die. Assign them a new role now.'
+    );
+    document.getElementById('reminder-ok-btn').onclick = () => {
+      document.getElementById('reminder-overlay').classList.remove('open');
+      document.getElementById('reminder-ok-btn').onclick =
+        () => document.getElementById('reminder-overlay').classList.remove('open');
+      openChangeCharacterPicker(idx);
+    };
+    return;
+  }
+
   p.alive       = false;
   p.deathMethod = method;
   delete state.quarantined[idx];
@@ -698,7 +739,7 @@ function markPlayerDead(idx, method) {
   saveState();
   document.getElementById('kill-modal-overlay').classList.remove('open');
   closePlayerModal();
-  checkEvilWin();
+  if (!checkLoneWolfWin()) checkEvilWin();
   renderArena();
 }
 
@@ -712,4 +753,16 @@ function checkEvilWin() {
       'All living players are monsters or minions. The village has fallen.'
     );
   }
+}
+
+function checkLoneWolfWin() {
+  const livingMonsters = state.assigned.filter(p => p.alive !== false && p.cat === 'Monster');
+  if (livingMonsters.length === 1 && livingMonsters[0].id === 'lone-wolf') {
+    showReminder(
+      '🌕 Lone Wolf Wins!',
+      livingMonsters[0].player + ' is the Lone Wolf and the last monster standing. They win alone!'
+    );
+    return true;
+  }
+  return false;
 }
