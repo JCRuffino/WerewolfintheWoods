@@ -69,7 +69,7 @@
     <div class="role-grid" id="minion-grid"></div>
   </div>
   <div class="nav-row">
-    <button class="btn btn-ghost-style" onclick="goBackToPlayers()">← Back</button>
+    <button class="btn btn-ghost-style" onclick="goToMonster()">← Back</button>
     <button class="btn btn-primary" id="btn-minion-next" onclick="goToOutcast()">Next →</button>
   </div>
 </div>
@@ -84,7 +84,7 @@
     <div class="role-grid" id="outcast-grid"></div>
   </div>
   <div class="nav-row">
-    <button class="btn btn-ghost-style" onclick="goBackToPlayers()">← Back</button>
+    <button class="btn btn-ghost-style" onclick="goToMinion()">← Back</button>
     <button class="btn btn-primary" id="btn-outcast-next" onclick="goToVillager()">Next →</button>
   </div>
 </div>
@@ -99,7 +99,7 @@
     <div class="role-grid" id="villager-grid"></div>
   </div>
   <div class="nav-row">
-    <button class="btn btn-ghost-style" onclick="goBackToPlayers()">← Back</button>
+    <button class="btn btn-ghost-style" onclick="goToOutcast()">← Back</button>
     <button class="btn btn-primary" id="btn-villager-next" disabled onclick="goToSummary()">Next →</button>
   </div>
 </div>
@@ -132,6 +132,7 @@
   <div class="reveal-player" id="reveal-player"></div>
   <div class="reveal-role"   id="reveal-role"></div>
   <div class="reveal-cat"    id="reveal-cat"></div>
+  <div class="sri-shapeshifter-warning" id="reveal-shapeshifter-warning" style="display:none">🌀 A Shapeshifter is in play</div>
   <button class="btn btn-ghost-style mt-auto" style="width:100%;max-width:320px;"
           onclick="showScreen('screen-showroles')">← Back</button>
 </div>

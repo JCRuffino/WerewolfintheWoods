@@ -446,8 +446,8 @@ function renderShowRoles() {
   const hasShapeshifter = state.assigned.some(a => a.id === 'shapeshifter');
 
   state.assigned.forEach((entry, i) => {
-    const isEvil           = entry.cat === 'Monster' || entry.cat === 'Minion';
-    const isShapeshifter   = entry.id === 'shapeshifter';
+    const isEvil         = entry.cat === 'Monster' || entry.cat === 'Minion';
+    const isShapeshifter = entry.id === 'shapeshifter';
     const shapeshifterWarning = (hasShapeshifter && isEvil && !isShapeshifter)
       ? '<div class="sri-shapeshifter-warning">🌀 A Shapeshifter is in play</div>'
       : '';
@@ -473,6 +473,13 @@ function revealRole(i) {
   document.getElementById('reveal-player').textContent = e.player;
   document.getElementById('reveal-role').textContent   = e.role;
   document.getElementById('reveal-cat').textContent    = e.cat;
+
+  const hasShapeshifter = state.assigned.some(a => a.id === 'shapeshifter');
+  const isEvil          = e.cat === 'Monster' || e.cat === 'Minion';
+  const isShapeshifter  = e.id === 'shapeshifter';
+  document.getElementById('reveal-shapeshifter-warning').style.display =
+    (hasShapeshifter && isEvil && !isShapeshifter) ? 'block' : 'none';
+
   showScreen('screen-reveal');
 }
 
