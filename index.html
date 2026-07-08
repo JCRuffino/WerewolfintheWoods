@@ -230,6 +230,13 @@
     <div class="pab-sub">Choose a player to protect</div>
   </div>
 </button>
+<button class="pm-action-btn" id="pm-nullifier-select" onclick="openNullifierPicker(activePlayerIndex)" style="display:none">
+  <span class="pab-icon">🔮</span>
+  <div>
+    <div class="pab-label">Set Nullifier Target</div>
+    <div class="pab-sub">No target set</div>
+  </div>
+</button>
       <button class="pm-action-btn" id="pm-farmer-select" onclick="openFarmerTargetPicker()" style="display:none">
         <span class="pab-icon">🌾</span>
         <div>
@@ -244,13 +251,14 @@
           <div class="pab-sub">Choose a player to watch</div>
         </div>
       </button>
-      <button class="pm-action-btn" id="pm-tax-target" onclick="openTaxCollectorPicker(activePlayerIndex)" style="display:none">
-  <span class="pab-icon">💰</span>
+    <button class="pm-action-btn" id="pm-executioner-target" onclick="openTaxCollectorPicker(activePlayerIndex)" style="display:none">
+  <span class="pab-icon">⚖️</span>
   <div>
-    <div class="pab-label" id="pm-tax-label">Set Target</div>
+    <div class="pab-label" id="pm-executioner-label">Set Target</div>
     <div class="pab-sub">Currently: None</div>
   </div>
 </button>
+
 
 <button class="pm-action-btn" id="pm-weaver-assign" onclick="openWeaverPicker(activePlayerIndex)" style="display:none">
   <span class="pab-icon">🕸️</span>
@@ -312,6 +320,19 @@
   </div>
 </div>
 
+<!-- Nullifier picker -->
+<div class="modal-overlay" id="nullifier-picker-overlay">
+  <div class="modal-box farmer-picker-box">
+    <h3>🔮 Nullifier Target</h3>
+    <p>Choose the player this Nullifier is affecting.</p>
+    <div class="farmer-picker-list" id="nullifier-picker-list"></div>
+    <button class="btn btn-ghost-style btn-full" style="margin-top:12px"
+      onclick="document.getElementById('nullifier-picker-overlay').classList.remove('open')">
+      Cancel
+    </button>
+  </div>
+</div>
+
 <!-- Reminder popup -->
 <div class="modal-overlay" id="reminder-overlay">
   <div class="modal-box">
@@ -342,11 +363,11 @@
   </div>
 </div>
 
-<!-- Tax Collector picker -->
+<!-- Executioner picker -->
 <div class="modal-overlay" id="tax-picker-overlay">
   <div class="modal-box farmer-picker-box">
-    <h3>💰 Tax Collector Target</h3>
-    <p>Choose the player this Tax Collector is watching.</p>
+    <h3>⚖️ Executioner Target</h3>
+    <p>Choose the player this Executioner is watching.</p>
     <div class="farmer-picker-list" id="tax-picker-list"></div>
     <button class="btn btn-ghost-style btn-full" style="margin-top:12px"
       onclick="document.getElementById('tax-picker-overlay').classList.remove('open')">
@@ -354,6 +375,7 @@
     </button>
   </div>
 </div>
+
 
 <div class="modal-overlay" id="modal-knight-picker">
   <div class="modal-box farmer-picker-box">

@@ -5,22 +5,21 @@ let state = {
     minion:   {},
     outcast:  {},
     villager: {},
-    nullifierTargets: {},
     loneWolf: 0,
   },
-  assigned: [],
-  gameInProgress: false,
-  round: 1,
-  phase: 'night',
-  monkProtected: null,
-  farmerSelections: {}, // key: farmer player index, value: target player index
-  knightTargets: {}, // { knightAssignedIndex: targetAssignedIndex }
-knightReminderPending: false,
-taxCollectorTargets: {},  // { assignedIndex: targetAssignedIndex }
-quarantined: {},          // { assignedIndex: true }
-lovers: [],               // [indexA, indexB]
-weaverAssignments: {},    // { assignedIndex: { monster: roleObj, minion: roleObj } }
-
+  assigned:             [],
+  gameInProgress:       false,
+  round:                1,
+  phase:                'night',
+  monkProtections:      {},
+  nullifierTargets:     {},
+  farmerSelections:     {},
+  knightTargets:        {},
+  knightReminderPending: false,
+  taxCollectorTargets:  {},
+  quarantined:          {},
+  lovers:               [],
+  weaverAssignments:    {},
 };
 
 function resetState() {
@@ -30,24 +29,22 @@ function resetState() {
     minion:   {},
     outcast:  {},
     villager: {},
-    nullifierTargets: {},
     loneWolf: 0,
   };
-  state.assigned             = [];
-  state.gameInProgress       = false;
-  state.round                = 1;
-  state.phase                = 'night';
-  state.monkProtections      = {};
-  state.farmerSelections     = {};
-  state.knightTargets        = {};
+  state.assigned              = [];
+  state.gameInProgress        = false;
+  state.round                 = 1;
+  state.phase                 = 'night';
+  state.monkProtections       = {};
+  state.nullifierTargets      = {};
+  state.farmerSelections      = {};
+  state.knightTargets         = {};
   state.knightReminderPending = false;
-  state.taxCollectorTargets  = {};
-  state.quarantined          = {};
-  state.lovers               = [];
-  state.weaverAssignments    = {};
-  
+  state.taxCollectorTargets   = {};
+  state.quarantined           = {};
+  state.lovers                = [];
+  state.weaverAssignments     = {};
 }
-
 
 function assignedCountSingle(type) {
   const sel = state.selections[type];
@@ -81,4 +78,3 @@ function updateCounter(type) {
     document.getElementById('btn-continue').style.display = 'flex';
   }
 })();
-

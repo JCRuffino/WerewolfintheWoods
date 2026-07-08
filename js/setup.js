@@ -442,14 +442,16 @@ function assignRoles() {
 function renderShowRoles() {
   const list = document.getElementById('show-roles-list');
   list.innerHTML = '';
-      const hasShapeshifter = state.assigned.some(a => a.id === 'shapeshifter');
-    const isEvil = entry.cat === 'Monster' || entry.cat === 'Minion';
-    const isShapeshifter = entry.id === 'shapeshifter';
+
+  const hasShapeshifter = state.assigned.some(a => a.id === 'shapeshifter');
+
+  state.assigned.forEach((entry, i) => {
+    const isEvil           = entry.cat === 'Monster' || entry.cat === 'Minion';
+    const isShapeshifter   = entry.id === 'shapeshifter';
     const shapeshifterWarning = (hasShapeshifter && isEvil && !isShapeshifter)
       ? '<div class="sri-shapeshifter-warning">🌀 A Shapeshifter is in play</div>'
       : '';
 
-  state.assigned.forEach((entry, i) => {
     const div = document.createElement('div');
     div.className = 'show-role-item';
     div.innerHTML =
@@ -457,7 +459,7 @@ function renderShowRoles() {
       '<div class="sri-info">' +
         '<div class="sri-player">' + escHtml(entry.player) + '</div>' +
         '<div class="sri-role">Tap to reveal role</div>' +
-                shapeshifterWarning +
+        shapeshifterWarning +
       '</div>' +
       '<span class="sri-arrow">›</span>';
     div.onclick = () => revealRole(i);

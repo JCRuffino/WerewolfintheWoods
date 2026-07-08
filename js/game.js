@@ -60,6 +60,13 @@ function renderArena() {
     monkWatching[targetIdx] = true;
   });
 
+  const nullifierWatching = {};
+  Object.entries(state.nullifierTargets).forEach(([nullIdx, targetIdx]) => {
+    const null_ = state.assigned[nullIdx];
+    if (!null_ || null_.alive === false) return;
+    nullifierWatching[targetIdx] = true;
+  });
+
   requestAnimationFrame(() => {
     const W  = arena.offsetWidth  || window.innerWidth;
     const H  = arena.offsetHeight || 300;
@@ -82,6 +89,7 @@ function renderArena() {
       const isGhost         = p.alive === false;
       const status          = isGhost ? 'ghost' : 'alive';
       const isMonkProtected = !!monkWatching[i];
+      const isNullified     = !!nullifierWatching[i];
       const farmers         = farmerWatching[i] || [];
       const isFarmerWatched = farmers.length > 0;
       const isQuarantined   = !!state.quarantined[i];
@@ -100,7 +108,9 @@ function renderArena() {
       token.className = 'player-token ' + status + ' ' + teamClass +
         (isMonkProtected && !isGhost ? ' monk-protected' : '') +
         (isFarmerWatched && !isGhost ? ' farmer-watched' : '') +
-        (isQuarantined               ? ' quarantined'    : '');
+        (isQuarantined               ? ' quarantined'    : '') +
+        (isNullified     && !isGhost ? ' nullified'      : '');
+
       token.style.left = x + 'px';
       token.style.top  = y + 'px';
       token.style.setProperty('--token-size', tokenSize + 'px');
@@ -110,8 +120,9 @@ function renderArena() {
         '<div class="token-dot">' +
           p.icon +
           '<span class="token-ghost-overlay">👻</span>' +
-          (isMonkProtected && !isGhost ? '<span class="token-halo">😇</span>'       : '') +
-          (isFarmerWatched && !isGhost ? '<span class="token-farmer-pip">🌾</span>' : '') +
+          (isMonkProtected && !isGhost ? '<span class="token-halo">😇</span>'          : '') +
+          (isFarmerWatched && !isGhost ? '<span class="token-farmer-pip">🌾</span>'    : '') +
+          (isNullified     && !isGhost ? '<span class="token-nullifier-pip">🔮</span>' : '') +
           '<span class="token-quarantine"></span>' +
         '</div>' +
         '<div class="token-name">' + escHtml(p.player) + '</div>' +
@@ -122,7 +133,6 @@ function renderArena() {
     });
   });
 }
-
 
 /* ── Bottom state machine ── */
 function setGameBottomState(stateName) {

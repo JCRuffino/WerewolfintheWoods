@@ -361,68 +361,74 @@ input[type="text"]::placeholder { color: var(--muted); }
   text-align: center;
 }
 
-/* ── Alignment ring (inner) ── */
+/* ── Alignment ring (inner border) ── */
 .player-token.team-evil .token-dot    { border-color: #e94560; }
 .player-token.team-good .token-dot    { border-color: #4a9eff; }
 .player-token.team-outcast .token-dot { border-color: #7f8c8d; }
 
-/* ── Outer status ring via ::after ── */
-/* Default — no outer ring */
-.token-dot::after {
-  content: none;
+/* ── Ghost ring ── */
+.player-token.ghost .token-dot {
+  box-shadow: 0 0 0 5px rgba(255,255,255,.35), 0 2px 12px rgba(0,0,0,.4);
 }
 
-/* Ghost outer ring — white */
-.player-token.ghost .token-dot::after {
-  content: '';
-  position: absolute;
-  inset: -8px;
-  border-radius: 50%;
-  border: 3px solid rgba(255,255,255,.6);
-  pointer-events: none;
+/* ── Monk ring (gold) ── */
+.player-token.alive.monk-protected .token-dot {
+  box-shadow: 0 0 0 5px #f5c842, 0 0 12px rgba(245,200,66,.5), 0 2px 12px rgba(0,0,0,.4);
 }
 
-/* Monk outer ring — gold (only when alive) */
-.player-token.alive.monk-protected .token-dot::after {
-  content: '';
-  position: absolute;
-  inset: -8px;
-  border-radius: 50%;
-  border: 3px solid #f5c842;
-  box-shadow: 0 0 10px rgba(245,200,66,.5);
-  pointer-events: none;
+/* ── Farmer ring (green) ── */
+.player-token.alive.farmer-watched .token-dot {
+  box-shadow: 0 0 0 5px #7ed957, 0 0 12px rgba(126,217,87,.4), 0 2px 12px rgba(0,0,0,.4);
 }
 
-/* Farmer outer ring — green (only when alive) */
-.player-token.alive.farmer-watched .token-dot::after {
-  content: '';
-  position: absolute;
-  inset: -8px;
-  border-radius: 50%;
-  border: 3px solid #7ed957;
-  box-shadow: 0 0 10px rgba(126,217,87,.4);
-  pointer-events: none;
+/* ── Nullifier ring (purple) ── */
+.player-token.alive.nullified .token-dot {
+  box-shadow: 0 0 0 5px #9b59b6, 0 0 12px rgba(155,89,182,.4), 0 2px 12px rgba(0,0,0,.4);
 }
 
-/* Both monk and farmer — use a double ring via ::before for farmer, ::after for monk */
-.player-token.alive.monk-protected.farmer-watched .token-dot::before {
-  content: '';
-  position: absolute;
-  inset: -14px;
-  border-radius: 50%;
-  border: 3px solid #7ed957;
-  box-shadow: 0 0 10px rgba(126,217,87,.4);
-  pointer-events: none;
+/* ── Monk + Farmer ── */
+.player-token.alive.monk-protected.farmer-watched .token-dot {
+  box-shadow:
+    0 0 0 5px #f5c842,
+    0 0 0 10px #7ed957,
+    0 0 12px rgba(126,217,87,.4),
+    0 2px 12px rgba(0,0,0,.4);
 }
-.player-token.alive.monk-protected.farmer-watched .token-dot::after {
-  content: '';
-  position: absolute;
-  inset: -8px;
-  border-radius: 50%;
-  border: 3px solid #f5c842;
-  box-shadow: 0 0 10px rgba(245,200,66,.5);
-  pointer-events: none;
+
+/* ── Monk + Nullifier ── */
+.player-token.alive.monk-protected.nullified .token-dot {
+  box-shadow:
+    0 0 0 5px #f5c842,
+    0 0 0 10px #9b59b6,
+    0 0 12px rgba(155,89,182,.4),
+    0 2px 12px rgba(0,0,0,.4);
 }
+
+/* ── Farmer + Nullifier ── */
+.player-token.alive.farmer-watched.nullified .token-dot {
+  box-shadow:
+    0 0 0 5px #7ed957,
+    0 0 0 10px #9b59b6,
+    0 0 12px rgba(155,89,182,.4),
+    0 2px 12px rgba(0,0,0,.4);
+}
+
+/* ── All three ── */
+.player-token.alive.monk-protected.farmer-watched.nullified .token-dot {
+  box-shadow:
+    0 0 0 5px #f5c842,
+    0 0 0 10px #7ed957,
+    0 0 0 15px #9b59b6,
+    0 0 12px rgba(155,89,182,.4),
+    0 2px 12px rgba(0,0,0,.4);
+}
+
+/* ── Ghost token appearance ── */
+.player-token.ghost .token-dot {
+  background: rgba(127,140,141,.12);
+  opacity: .65;
+}
+.player-token.ghost .token-name { opacity: .5; }
 
 /* ── Ghost token appearance ── */
 .player-token.ghost .token-dot {
@@ -480,17 +486,6 @@ input[type="text"]::placeholder { color: var(--muted); }
   transition: opacity .3s;
 }
 
-/* ── Monk protection ring — ::after sits just outside token border ── */
-.player-token.monk-protected .token-dot::after {
-  content: '';
-  position: absolute;
-  inset: -7px;
-  border-radius: 50%;
-  border: 3px solid #f5c842;
-  box-shadow: 0 0 10px rgba(245,200,66,.5);
-  pointer-events: none;
-}
-
 .token-halo {
   position: absolute;
   top: -20px;
@@ -506,17 +501,6 @@ input[type="text"]::placeholder { color: var(--muted); }
 @keyframes haloFloat {
   0%, 100% { transform: translateX(-50%) translateY(0); }
   50%       { transform: translateX(-50%) translateY(-3px); }
-}
-
-/* ── Farmer watched ring — ::before sits outside monk ring ── */
-.player-token.farmer-watched .token-dot::before {
-  content: '';
-  position: absolute;
-  inset: -14px;
-  border-radius: 50%;
-  border: 3px solid #7ed957;
-  box-shadow: 0 0 10px rgba(126,217,87,.4);
-  pointer-events: none;
 }
 
 .token-farmer-pip {
@@ -846,4 +830,23 @@ input[type="text"]::placeholder { color: var(--muted); }
   font-size: .75rem; font-weight: 800; color: var(--muted);
   text-transform: uppercase; letter-spacing: .5px;
   padding: 6px 2px 4px;
+}
+
+/* ── Nullifier pip ── */
+.token-nullifier-pip {
+  position: absolute;
+  top: -20px;
+  right: -8px;
+  font-size: .8rem;
+  line-height: 1;
+  filter: drop-shadow(0 1px 3px rgba(0,0,0,.8));
+  z-index: 2;
+}
+
+/* ── Shapeshifter warning on role reveal screen ── */
+.sri-shapeshifter-warning {
+  font-size: .75rem;
+  color: #a78bfa;
+  margin-top: 4px;
+  font-weight: 600;
 }

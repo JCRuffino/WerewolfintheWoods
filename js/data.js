@@ -6,17 +6,18 @@ const ROLES = {
     { id:'zombie',     name:'Zombie',     icon:'🧟', cat:'Monster', min:1, max:1, note:'1' },
   ],
   minion: [
-    { id:'snatcher',      name:'Snatcher',      icon:'🪤', cat:'Minion', min:1, max:2, note:'1–2' },
-    { id:'tax-collector', name:'Tax Collector',  icon:'💰', cat:'Minion', min:1, max:3, note:'1–3' },
+    { id:'executioner',  name:'Executioner',  icon:'⚖️', cat:'Minion', min:1, max:3, note:'1–3' },
+    { id:'nullifier',    name:'Nullifier',     icon:'🔮', cat:'Minion', min:1, max:2, note:'1–2' },
+    { id:'shapeshifter', name:'Shapeshifter',  icon:'🌀', cat:'Minion', min:1, max:1, note:'1' },
   ],
   outcast: [
+    { id:'cobbler',    name:'Cobbler',    icon:'👞', cat:'Outcast', min:1, max:4, note:'1–4' },
     { id:'liar',       name:'Liar',       icon:'🎭', cat:'Outcast', min:1, max:2, note:'1–2' },
     { id:'matchmaker', name:'Matchmaker', icon:'💘', cat:'Outcast', min:1, max:2, note:'1–2' },
     { id:'tanner',     name:'Tanner',     icon:'🪵', cat:'Outcast', min:1, max:2, note:'1–2' },
   ],
   villager: [
     { id:'butcher',    name:'Butcher',    icon:'🔪', cat:'Villager', min:1, max:2, note:'1–2' },
-    { id:'cobbler',    name:'Cobbler',    icon:'👞', cat:'Villager', min:1, max:4, note:'1–4' },
     { id:'farmer',     name:'Farmer',     icon:'🌾', cat:'Villager', min:1, max:3, note:'1–3' },
     { id:'fishmonger', name:'Fishmonger', icon:'🐟', cat:'Villager', min:1, max:4, note:'1–4' },
     { id:'hero',       name:'Hero',       icon:'🦸', cat:'Villager', min:1, max:2, note:'1–2' },
@@ -29,17 +30,13 @@ const ROLES = {
   ],
 };
 
-function getRolesInGame() {
-  return state.assigned.map(p => p.id);
-}
-
 function buildNightActions(isFirstNight) {
   const assigned = state.assigned;
 
   const hasRole = (id) => assigned.some(p => p.alive !== false && p.id === id);
 
   const monsterIds = ['alpha-wolf', 'vampire', 'blob', 'zombie'];
-  const minionIds  = ['snatcher', 'tax-collector'];
+  const minionIds  = ['executioner', 'nullifier', 'shapeshifter'];
 
   const livingMonsters = assigned.filter(p => p.alive !== false && monsterIds.includes(p.id));
   const livingMinions  = assigned.filter(p => p.alive !== false && minionIds.includes(p.id));
@@ -91,12 +88,21 @@ function buildNightActions(isFirstNight) {
       });
     }
 
-    // Tax Collector
-    if (hasRole('tax-collector')) {
+    // Nullifier — first night only, after minions
+    if (hasRole('nullifier')) {
       actions.push({
-        id: 'tax-collector-acts',
-        icon: '💰', title: 'Tax Collector Chooses',
-        desc: 'Wake Tax Collector(s). Ask each to point to a player. Mark their target in the app.'
+        id: 'nullifier-acts',
+        icon: '🔮', title: 'Nullifier Chooses',
+        desc: 'Wake Nullifier(s). Ask each to point to a player to apply their effect to.'
+      });
+    }
+
+    // Executioner
+    if (hasRole('executioner')) {
+      actions.push({
+        id: 'executioner-acts',
+        icon: '⚖️', title: 'Executioner Chooses',
+        desc: 'Wake Executioner(s). Ask each to point to a player. Mark their target in the app.'
       });
     }
 
@@ -154,6 +160,15 @@ function buildNightActions(isFirstNight) {
       });
     }
 
+    // Cobbler — always last reminder before wake
+    if (hasRole('cobbler')) {
+      actions.push({
+        id: 'cobbler-reminder',
+        icon: '👞', title: 'Cobbler Reminder',
+        desc: 'Remind yourself of the Cobbler\'s effect before the day phase begins.'
+      });
+    }
+
   } else {
     // ── Night 2+ ──
 
@@ -163,15 +178,6 @@ function buildNightActions(isFirstNight) {
       icon: '😈', title: 'Monsters Raise Hands',
       desc: 'Ask all monsters to raise their hand. Check for any new monsters and update their characters in the app.'
     });
-
-    // Seer announcement (recurring)
-    if (hasRole('seer')) {
-      actions.push({
-        id: 'seer-acts',
-        icon: '🔮', title: 'Seer Announcement',
-        desc: 'Make the Seer announcement to the table.'
-      });
-    }
 
     // Fishmonger (recurring)
     if (hasRole('fishmonger')) {
@@ -245,6 +251,15 @@ function buildNightActions(isFirstNight) {
         });
       }
     });
+
+    // Cobbler — always last reminder before wake
+    if (hasRole('cobbler')) {
+      actions.push({
+        id: 'cobbler-reminder',
+        icon: '👞', title: 'Cobbler Reminder',
+        desc: 'Remind yourself of the Cobbler\'s effect before the day phase begins.'
+      });
+    }
   }
 
   // ── Always last ──
@@ -256,3 +271,4 @@ function buildNightActions(isFirstNight) {
 
   return actions;
 }
+
