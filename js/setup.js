@@ -23,7 +23,7 @@ function addPlayer() {
     p => p.toLowerCase() === name.toLowerCase()
   );
   if (duplicate) {
-    showNameError('A player named "' + escHtml(name) + '" already exists.');
+    showNameError('A player named "' + name + '" already exists.');
     return;
   }
 
@@ -290,8 +290,10 @@ function goToSummary() {
   const list      = document.getElementById('summary-list');
   const sub       = document.getElementById('summary-subtitle');
 
-  sub.textContent = assigned + ' of ' + total + ' roles assigned' +
-    (remaining > 0 ? ' — ' + remaining + ' will be plain Villagers' : ' ✓');
+  sub.textContent = remaining < 0
+    ? '⚠️ ' + (-remaining) + ' more roles than players — go back and reduce role counts'
+    : assigned + ' of ' + total + ' roles assigned' +
+      (remaining > 0 ? ' — ' + remaining + ' will be plain Villagers' : ' ✓');
 
   list.innerHTML = '';
   const catClass = {
@@ -384,6 +386,16 @@ function goToSummary() {
 
 /* ── Assign roles ── */
 function assignRoles() {
+  // Counts are only clamped when changed, so removing players after selecting
+  // roles can leave more roles than players — refuse rather than silently drop.
+  if (totalAssigned() > state.players.length) {
+    showReminder(
+      '⚠️ Too Many Roles',
+      'More roles are selected than there are players. Go back and reduce the role counts before assigning.'
+    );
+    return;
+  }
+
   const pool = [];
 
   // Monster

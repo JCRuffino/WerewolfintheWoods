@@ -101,7 +101,7 @@ function renderArena() {
       const isFarmerWatched   = farmers.length > 0;
       const isQuarantined     = !!state.quarantined[i];
       const isKnightProtected = !!knightWatching[i] && !isGhost;
-      const isLover           = state.lovers.includes(i);
+      const isLover           = state.lovers.includes(i) && !isGhost;
 
       let teamClass = 'team-good';
       if (p.cat === 'Monster' || p.cat === 'Minion') teamClass = 'team-evil';
@@ -351,7 +351,7 @@ function triggerNextNight() {
   updatePhaseLabel();
   setGameBottomState('night-btn');
 
-  if (state.round >= 4) {
+  if (state.round === 4) {
     const livingLiar = state.assigned.find(p => p.alive !== false && p.id === 'liar');
     if (livingLiar) {
       showReminder(

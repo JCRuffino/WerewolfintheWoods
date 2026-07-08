@@ -41,7 +41,7 @@ function buildNightActions(isFirstNight) {
   const hasRole = (id) => assigned.some(p => p.alive !== false && p.id === id);
 
   const monsterIds = ['alpha-wolf', 'vampire', 'blob', 'zombie'];
-  const minionIds  = ['executioner', 'nullifier', 'shapeshifter'];
+  const minionIds  = ['executioner', 'nullifier', 'shapeshifter', 'snatcher'];
 
   const livingMonsters = assigned.filter(p => p.alive !== false && monsterIds.includes(p.id));
   const livingMinions  = assigned.filter(p => p.alive !== false && minionIds.includes(p.id));
@@ -108,6 +108,15 @@ function buildNightActions(isFirstNight) {
         id: 'executioner-acts',
         icon: '⚖️', title: 'Executioner Chooses',
         desc: 'Wake Executioner(s). Ask each to point to a player. Mark their target in the app.'
+      });
+    }
+
+    // Snatcher
+    if (hasRole('snatcher')) {
+      actions.push({
+        id: 'snatcher-acts',
+        icon: '🪝', title: 'Snatcher Chooses',
+        desc: 'Wake Snatcher(s). Ask each to point to a player. Remember their choice — it matters if that player is quarantined.'
       });
     }
 

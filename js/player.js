@@ -244,27 +244,31 @@ function openKillModal(idx) {
   document.getElementById('kill-modal-overlay').classList.add('open');
 }
 
-function openMonkTargetPicker() {
-  if (activePlayerIndex === null) return;
-  const picker = document.getElementById('modal-monk-picker');
-  const list   = document.getElementById('monk-picker-list');
+/* Shared list-of-living-players picker used by every target-choosing role */
+function openTargetPicker(overlayId, listId, actorIdx, isSelected, onSelect) {
+  const list = document.getElementById(listId);
   list.innerHTML = '';
-
   state.assigned.forEach((p, i) => {
-    if (i === activePlayerIndex) return;
+    if (i === actorIdx) return;
     if (p.alive === false) return;
-    const isCurrentTarget = state.monkProtections[activePlayerIndex] === i;
+    const sel = isSelected(i);
     const row = document.createElement('button');
-    row.className = 'farmer-pick-row' + (isCurrentTarget ? ' selected' : '');
+    row.className = 'farmer-pick-row' + (sel ? ' selected' : '');
     row.innerHTML =
       '<span class="fp-icon">' + p.icon + '</span>' +
       '<span class="fp-name">' + escHtml(p.player) + '</span>' +
-      (isCurrentTarget ? '<span class="fp-check">✓</span>' : '');
-    row.onclick = () => selectMonkTarget(i);
+      (sel ? '<span class="fp-check">✓</span>' : '');
+    row.onclick = () => onSelect(i);
     list.appendChild(row);
   });
+  document.getElementById(overlayId).classList.add('open');
+}
 
-  picker.classList.add('open');
+function openMonkTargetPicker() {
+  if (activePlayerIndex === null) return;
+  openTargetPicker('modal-monk-picker', 'monk-picker-list', activePlayerIndex,
+    i => state.monkProtections[activePlayerIndex] === i,
+    selectMonkTarget);
 }
 
 function selectMonkTarget(targetIndex) {
@@ -288,53 +292,22 @@ function selectMonkTarget(targetIndex) {
 }
 function openNullifierPicker(idx) {
   activePlayerIndex = idx;
-  const list = document.getElementById('nullifier-picker-list');
-  list.innerHTML = '';
-
-  state.assigned.forEach((p, i) => {
-    if (i === idx) return;
-    if (p.alive === false) return;
-    const isCurrent = state.nullifierTargets[idx] === i;
-    const row = document.createElement('button');
-    row.className = 'farmer-pick-row' + (isCurrent ? ' selected' : '');
-    row.innerHTML =
-      '<span class="fp-icon">' + p.icon + '</span>' +
-      '<span class="fp-name">' + escHtml(p.player) + '</span>' +
-      (isCurrent ? '<span class="fp-check">✓</span>' : '');
-    row.onclick = () => {
+  openTargetPicker('nullifier-picker-overlay', 'nullifier-picker-list', idx,
+    i => state.nullifierTargets[idx] === i,
+    i => {
       state.nullifierTargets[idx] = i;
       saveState();
       document.getElementById('nullifier-picker-overlay').classList.remove('open');
       openPlayerModal(idx);
       renderArena();
-    };
-    list.appendChild(row);
-  });
-
-  document.getElementById('nullifier-picker-overlay').classList.add('open');
+    });
 }
 
 function openFarmerTargetPicker() {
   if (activePlayerIndex === null) return;
-  const picker = document.getElementById('modal-farmer-picker');
-  const list   = document.getElementById('farmer-picker-list');
-  list.innerHTML = '';
-
-  state.assigned.forEach((p, i) => {
-    if (i === activePlayerIndex) return;
-    if (p.alive === false) return;
-    const isCurrentTarget = state.farmerSelections[activePlayerIndex] === i;
-    const row = document.createElement('button');
-    row.className = 'farmer-pick-row' + (isCurrentTarget ? ' selected' : '');
-    row.innerHTML =
-      '<span class="fp-icon">' + p.icon + '</span>' +
-      '<span class="fp-name">' + escHtml(p.player) + '</span>' +
-      (isCurrentTarget ? '<span class="fp-check">✓</span>' : '');
-    row.onclick = () => selectFarmerTarget(i);
-    list.appendChild(row);
-  });
-
-  picker.classList.add('open');
+  openTargetPicker('modal-farmer-picker', 'farmer-picker-list', activePlayerIndex,
+    i => state.farmerSelections[activePlayerIndex] === i,
+    selectFarmerTarget);
 }
 
 function selectFarmerTarget(targetIndex) {
@@ -363,25 +336,9 @@ function closeFarmerTargetPicker() {
 
 function openKnightTargetPicker() {
   if (activePlayerIndex === null) return;
-  const picker = document.getElementById('modal-knight-picker');
-  const list   = document.getElementById('knight-picker-list');
-  list.innerHTML = '';
-
-  state.assigned.forEach((p, i) => {
-    if (i === activePlayerIndex) return;
-    if (p.alive === false) return;
-    const isCurrentTarget = state.knightTargets[activePlayerIndex] === i;
-    const row = document.createElement('button');
-    row.className = 'farmer-pick-row' + (isCurrentTarget ? ' selected' : '');
-    row.innerHTML =
-      '<span class="fp-icon">' + p.icon + '</span>' +
-      '<span class="fp-name">' + escHtml(p.player) + '</span>' +
-      (isCurrentTarget ? '<span class="fp-check">✓</span>' : '');
-    row.onclick = () => selectKnightTarget(i);
-    list.appendChild(row);
-  });
-
-  picker.classList.add('open');
+  openTargetPicker('modal-knight-picker', 'knight-picker-list', activePlayerIndex,
+    i => state.knightTargets[activePlayerIndex] === i,
+    selectKnightTarget);
 }
 
 function selectKnightTarget(targetIndex) {
@@ -439,35 +396,41 @@ function checkSnatcherReminder(targetIdx) {
   }
 }
 
-function showReminder(title, message) {
-  document.getElementById('reminder-title').textContent   = title;
-  document.getElementById('reminder-message').textContent = message;
+const reminderQueue = [];
+let reminderShowing = false;
+
+function showReminder(title, message, onOk) {
+  reminderQueue.push({ title, message, onOk });
+  if (!reminderShowing) showNextReminder();
+}
+
+function showNextReminder() {
+  const next = reminderQueue.shift();
+  if (!next) {
+    reminderShowing = false;
+    document.getElementById('reminder-overlay').classList.remove('open');
+    return;
+  }
+  reminderShowing = true;
+  document.getElementById('reminder-title').textContent   = next.title;
+  document.getElementById('reminder-message').textContent = next.message;
+  document.getElementById('reminder-ok-btn').onclick = () => {
+    showNextReminder();
+    if (next.onOk) next.onOk();
+  };
   document.getElementById('reminder-overlay').classList.add('open');
 }
 
 function openTaxCollectorPicker(collectorIdx) {
-  const list = document.getElementById('tax-picker-list');
-  list.innerHTML = '';
-  state.assigned.forEach((p, i) => {
-    if (i === collectorIdx) return;
-    if (p.alive === false) return;
-    const current = state.taxCollectorTargets[collectorIdx];
-    const row = document.createElement('button');
-    row.className = 'farmer-pick-row' + (current === i ? ' selected' : '');
-    row.innerHTML =
-      '<span class="fp-icon">' + p.icon + '</span>' +
-      '<span class="fp-name">'  + escHtml(p.player) + '</span>' +
-      (current === i ? '<span class="fp-check">✓</span>' : '');
-    row.onclick = () => {
+  openTargetPicker('tax-picker-overlay', 'tax-picker-list', collectorIdx,
+    i => state.taxCollectorTargets[collectorIdx] === i,
+    i => {
       state.taxCollectorTargets[collectorIdx] = i;
       saveState();
       document.getElementById('tax-picker-overlay').classList.remove('open');
       openPlayerModal(collectorIdx);
       renderArena();
-    };
-    list.appendChild(row);
-  });
-  document.getElementById('tax-picker-overlay').classList.add('open');
+    });
 }
 
 function openWeaverPicker(weaverIdx) {
@@ -616,6 +579,22 @@ function applyCharacterChange(idx, role) {
     p.originalCat  = p.cat;
   }
 
+  // Monk / Farmer — save history before deleting, as the death path does
+  if (p.id === 'monk' && state.monkProtections[idx] !== undefined) {
+    const targetName = state.assigned[state.monkProtections[idx]]?.player;
+    if (targetName) {
+      if (!p.monkProtectedHistory) p.monkProtectedHistory = [];
+      p.monkProtectedHistory.push(targetName);
+    }
+  }
+  if (p.id === 'farmer' && state.farmerSelections[idx] !== undefined) {
+    const targetName = state.assigned[state.farmerSelections[idx]]?.player;
+    if (targetName) {
+      if (!p.farmerWatchHistory) p.farmerWatchHistory = [];
+      p.farmerWatchHistory.push(targetName);
+    }
+  }
+
   // The old role's own target-setting effect stops — it's no longer in the game
   delete state.monkProtections[idx];
   delete state.farmerSelections[idx];
@@ -647,6 +626,7 @@ function markPlayerDead(idx, method) {
       const monk = state.assigned[protectingMonkIdx];
       if (monk && monk.alive !== false) {
         delete state.monkProtections[protectingMonkIdx];
+        delete state.quarantined[idx];
         saveState();
         document.getElementById('kill-modal-overlay').classList.remove('open');
         closePlayerModal();
@@ -662,18 +642,16 @@ function markPlayerDead(idx, method) {
 
   // Tanner secretly wins if executed — they don't die, they get a new role
   if (method === 'executed' && p.id === 'tanner') {
+    delete state.quarantined[idx];
+    saveState();
     document.getElementById('kill-modal-overlay').classList.remove('open');
     closePlayerModal();
+    renderArena();
     showReminder(
       '🪵 Tanner Executed!',
-      p.player + ' is the Tanner and does not die. Assign them a new role now.'
+      p.player + ' is the Tanner and does not die. Assign them a new role now.',
+      () => openChangeCharacterPicker(idx)
     );
-    document.getElementById('reminder-ok-btn').onclick = () => {
-      document.getElementById('reminder-overlay').classList.remove('open');
-      document.getElementById('reminder-ok-btn').onclick =
-        () => document.getElementById('reminder-overlay').classList.remove('open');
-      openChangeCharacterPicker(idx);
-    };
     return;
   }
 
@@ -725,14 +703,11 @@ function markPlayerDead(idx, method) {
     if (other && other.alive !== false) {
       showReminder(
         '💘 Lovers — ' + state.assigned[idx].player + ' has died',
-        other.player + ' is their lover and must also die. Tap OK then mark them as dead.'
+        other.player + ' is their lover and must also die. Tap OK then mark them as dead.',
+        () => openKillModal(otherIdx)
       );
-      document.getElementById('reminder-ok-btn').onclick = () => {
-        document.getElementById('reminder-overlay').classList.remove('open');
-        document.getElementById('reminder-ok-btn').onclick =
-          () => document.getElementById('reminder-overlay').classList.remove('open');
-        openKillModal(otherIdx);
-      };
+    } else {
+      state.lovers = [];
     }
   }
 
