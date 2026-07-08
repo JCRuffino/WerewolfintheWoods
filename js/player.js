@@ -409,6 +409,7 @@ function toggleQuarantine(idx) {
   } else {
     state.quarantined[idx] = true;
     checkExecutionerReminder(idx);
+    checkSnatcherReminder(idx);
   }
   saveState();
   closePlayerModal();
@@ -431,6 +432,19 @@ function checkExecutionerReminder(targetIdx) {
       '⚖️ Executioner Reminder',
       executioners.join(', ') + ' chose ' + target.player +
       ' — they are now quarantined. Remember to eliminate them before the next night phase.'
+    );
+  }
+}
+function checkSnatcherReminder(targetIdx) {
+  const target = state.assigned[targetIdx];
+  if (!target) return;
+  const snatchers = state.assigned.filter(
+    (p, i) => p.id === 'snatcher' && p.alive !== false && i !== targetIdx
+  );
+  if (snatchers.length > 0) {
+    showReminder(
+      '🪝 Snatcher Reminder',
+      target.player + ' has been quarantined. Check if any Snatcher has chosen them — if so, apply the Snatcher\'s effect now.'
     );
   }
 }

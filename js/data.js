@@ -9,6 +9,7 @@ const ROLES = {
     { id:'executioner',  name:'Executioner',  icon:'⚖️', cat:'Minion', min:1, max:3, note:'1–3' },
     { id:'nullifier',    name:'Nullifier',     icon:'🔮', cat:'Minion', min:1, max:2, note:'1–2' },
     { id:'shapeshifter', name:'Shapeshifter',  icon:'🌀', cat:'Minion', min:1, max:1, note:'1' },
+    { id:'snatcher',     name:'Snatcher',      icon:'🪝', cat:'Minion', min:1, max:2, note:'1–2' },
   ],
   outcast: [
     { id:'cobbler',    name:'Cobbler',    icon:'👞', cat:'Outcast', min:1, max:4, note:'1–4' },
