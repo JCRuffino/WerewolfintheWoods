@@ -63,7 +63,7 @@
 <div id="screen-minion" class="screen">
   <div class="counter-badge" id="counter-minion">0/0</div>
   <h2 class="mt-16">🕸️ Choose Minion</h2>
-  <p class="subtitle">Select one or more minion types, or skip if none.</p>
+  <p class="subtitle" id="minion-subtitle">Select one or more minion types, or skip if none.</p>
   <span class="optional-hint">Optional — skip with Next →</span>
   <div class="role-scroll">
     <div class="role-grid" id="minion-grid"></div>
@@ -133,6 +133,7 @@
   <div class="reveal-role"   id="reveal-role"></div>
   <div class="reveal-cat"    id="reveal-cat"></div>
   <div class="sri-shapeshifter-warning" id="reveal-shapeshifter-warning" style="display:none">🌀 A Shapeshifter is in play</div>
+  <div class="sri-blob-warning" id="reveal-blob-warning" style="display:none">🟢 The Blob is in play</div>
   <button class="btn btn-ghost-style mt-auto" style="width:100%;max-width:320px;"
           onclick="showScreen('screen-showroles')">← Back</button>
 </div>

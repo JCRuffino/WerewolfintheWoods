@@ -803,11 +803,14 @@ input[type="text"]::placeholder { color: var(--muted); }
   z-index: 2;
 }
 
-/* ── Shapeshifter warning on role reveal screen ── */
-.sri-shapeshifter-warning {
-  font-size: 1.5rem;
-  color: #a78bfa;
+/* ── Shapeshifter / Blob warnings — small on the overview list, large on the reveal screen ── */
+.sri-shapeshifter-warning, .sri-blob-warning {
+  font-size: .75rem;
   margin-top: 4px;
   font-weight: 600;
   display: block;
 }
+.sri-shapeshifter-warning { color: #a78bfa; }
+.sri-blob-warning         { color: #7ed957; }
+#screen-reveal .sri-shapeshifter-warning,
+#screen-reveal .sri-blob-warning { font-size: 1.5rem; }

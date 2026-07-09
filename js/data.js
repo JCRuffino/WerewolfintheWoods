@@ -2,7 +2,7 @@ const ROLES = {
   monster: [
     { id:'alpha-wolf', name:'Alpha Wolf', icon:'🐺', cat:'Monster', min:1, max:1, note:'1 + Lone Wolf' },
     { id:'vampire',    name:'Vampire',    icon:'🧛', cat:'Monster', min:1, max:2, note:'1–2' },
-    { id:'blob',       name:'The Blob',   icon:'🟢', cat:'Monster', min:2, max:3, note:'2–3, no minions' },
+    { id:'blob',       name:'The Blob',   icon:'🟢', cat:'Monster', min:2, max:3, note:'2–3, max 1 minion' },
     { id:'zombie',     name:'Zombie',     icon:'🧟', cat:'Monster', min:1, max:1, note:'1' },
   ],
   minion: [

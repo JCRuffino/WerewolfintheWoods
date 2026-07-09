@@ -73,8 +73,19 @@ function renderPlayerList() {
 }
 
 /* ── Role screen navigation ── */
+function isBlobGame() {
+  return state.selections.monster.role?.id === 'blob';
+}
+
 function goToMonster()     { buildSingleGrid('monster');   updateCounter('monster');  showScreen('screen-monster');  }
-function goToMinion()      { buildMultiGrid('minion');     updateCounter('minion');   showScreen('screen-minion');   }
+function goToMinion() {
+  buildMultiGrid('minion');
+  updateCounter('minion');
+  document.getElementById('minion-subtitle').textContent = isBlobGame()
+    ? 'The Blob is in play — you can select at most one minion.'
+    : 'Select one or more minion types, or skip if none.';
+  showScreen('screen-minion');
+}
 function goToOutcast()     { buildMultiGrid('outcast');    updateCounter('outcast');  showScreen('screen-outcast');  }
 function goToVillager()    { buildMultiGrid('villager');   updateCounter('villager'); showScreen('screen-villager'); }
 function goBackToPlayers() { showScreen('screen-players'); }
@@ -115,6 +126,12 @@ function selectSingleRole(type, role) {
 
   if (type === 'monster') {
     state.selections.loneWolf = (role.id === 'alpha-wolf') ? 1 : 0;
+    if (role.id === 'blob') {
+      // Blob allows at most one minion — trim any earlier selections
+      const minionIdsSelected = Object.keys(state.selections.minion);
+      minionIdsSelected.slice(1).forEach(id => delete state.selections.minion[id]);
+      if (minionIdsSelected.length > 0) state.selections.minion[minionIdsSelected[0]] = 1;
+    }
   }
 
   document.querySelectorAll('#' + type + '-grid .role-card').forEach(c => c.classList.remove('selected'));
@@ -225,6 +242,7 @@ function toggleMultiRole(type, role) {
     document.getElementById('mcard-' + type + '-' + role.id).classList.remove('multi-selected');
     document.getElementById('mcd-'   + type + '-' + role.id).textContent = '';
   } else {
+    if (type === 'minion' && isBlobGame() && Object.keys(mSel).length >= 1) return;
     const remaining = state.players.length - totalAssigned();
     if (remaining < role.min) return;
     mSel[role.id] = role.min;
@@ -243,7 +261,7 @@ function changeMultiCount(type, roleId, delta) {
   const role     = ROLES[type].find(r => r.id === roleId);
   const newVal   = mSel[roleId] + delta;
   const maxAllow = Math.min(
-    role.max,
+    (type === 'minion' && isBlobGame()) ? 1 : role.max,
     state.players.length - (totalAssigned() - mSel[roleId])
   );
   if (newVal < role.min || newVal > maxAllow) return;
@@ -259,7 +277,7 @@ function updateMultiCountBtns(type, roleId) {
   if (!mSel[roleId]) return;
   const role     = ROLES[type].find(r => r.id === roleId);
   const maxAllow = Math.min(
-    role.max,
+    (type === 'minion' && isBlobGame()) ? 1 : role.max,
     state.players.length - (totalAssigned() - mSel[roleId])
   );
   document.getElementById('mdec-' + type + '-' + roleId).disabled = mSel[roleId] <= role.min;
@@ -456,12 +474,16 @@ function renderShowRoles() {
   list.innerHTML = '';
 
   const hasShapeshifter = state.assigned.some(a => a.id === 'shapeshifter');
+  const hasBlob         = state.assigned.some(a => a.id === 'blob');
 
   state.assigned.forEach((entry, i) => {
     const isEvil         = entry.cat === 'Monster' || entry.cat === 'Minion';
     const isShapeshifter = entry.id === 'shapeshifter';
     const shapeshifterWarning = (hasShapeshifter && isEvil && !isShapeshifter)
       ? '<div class="sri-shapeshifter-warning">🌀 A Shapeshifter is in play</div>'
+      : '';
+    const blobWarning = (hasBlob && entry.cat === 'Minion')
+      ? '<div class="sri-blob-warning">🟢 The Blob is in play</div>'
       : '';
 
     const div = document.createElement('div');
@@ -472,6 +494,7 @@ function renderShowRoles() {
         '<div class="sri-player">' + escHtml(entry.player) + '</div>' +
         '<div class="sri-role">Tap to reveal role</div>' +
         shapeshifterWarning +
+        blobWarning +
       '</div>' +
       '<span class="sri-arrow">›</span>';
     div.onclick = () => revealRole(i);
@@ -487,10 +510,13 @@ function revealRole(i) {
   document.getElementById('reveal-cat').textContent    = e.cat;
 
   const hasShapeshifter = state.assigned.some(a => a.id === 'shapeshifter');
+  const hasBlob         = state.assigned.some(a => a.id === 'blob');
   const isEvil          = e.cat === 'Monster' || e.cat === 'Minion';
   const isShapeshifter  = e.id === 'shapeshifter';
   document.getElementById('reveal-shapeshifter-warning').style.display =
     (hasShapeshifter && isEvil && !isShapeshifter) ? 'block' : 'none';
+  document.getElementById('reveal-blob-warning').style.display =
+    (hasBlob && e.cat === 'Minion') ? 'block' : 'none';
 
   showScreen('screen-reveal');
 }
