@@ -24,7 +24,7 @@ const ROLES = {
     { id:'hero',       name:'Hero',       icon:'🦸', cat:'Villager', min:1, max:2, note:'1–2' },
     { id:'hunter',     name:'Hunter',     icon:'🏹', cat:'Villager', min:1, max:2, note:'1–2' },
     { id:'knight',     name:'Knight',     icon:'⚔️', cat:'Villager', min:1, max:2, note:'1–2' },
-    { id:'mason',      name:'Mason',      icon:'🧱', cat:'Villager', min:1, max:2, note:'1–2' },
+    { id:'mason',      name:'Mason',      icon:'🧱', cat:'Villager', min:1, max:3, note:'1–3' },
     { id:'monk',       name:'Monk',       icon:'🧘', cat:'Villager', min:1, max:2, note:'1–2' },
     { id:'seer',       name:'Seer',       icon:'🔮', cat:'Villager', min:1, max:2, note:'1–2' },
     { id:'weaver',     name:'Weaver',     icon:'🕸️', cat:'Villager', min:1, max:2, note:'1–2' },
@@ -133,8 +133,8 @@ function buildNightActions(isFirstNight) {
     if (hasRole('mason')) {
       actions.push({
         id: 'masons-wake',
-        icon: '🧱', title: 'Masons Wake',
-        desc: 'Wake all Masons. Ask them to open their eyes and look around so they learn each other.'
+        icon: '🧱', title: 'Masons Learn',
+        desc: 'Wake each Mason individually and point out another Mason to them. One Mason should be shown a non-Mason instead.'
       });
     }
 
