@@ -18,7 +18,7 @@ const ROLES = {
     { id:'tanner',     name:'Tanner',     icon:'🪵', cat:'Outcast', min:1, max:2, note:'1–2' },
   ],
   villager: [
-    { id:'butcher',    name:'Butcher',    icon:'🔪', cat:'Villager', min:1, max:2, note:'1–2' },
+    { id:'healer',     name:'Healer',     icon:'➕', cat:'Villager', min:1, max:2, note:'1–2' },
     { id:'farmer',     name:'Farmer',     icon:'🌾', cat:'Villager', min:1, max:2, note:'1–2' },
     { id:'fishmonger', name:'Fishmonger', icon:'🐟', cat:'Villager', min:1, max:2, note:'1–2' },
     { id:'hero',       name:'Hero',       icon:'🦸', cat:'Villager', min:1, max:2, note:'1–2' },
@@ -208,6 +208,15 @@ function buildNightActions(isFirstNight) {
         id: 'monk-acts',
         icon: '🧘', title: 'Monks Choose',
         desc: 'Wake Monk(s). Ask each to point to a player to protect tonight.'
+      });
+    }
+
+    // Healer (recurring from night 2)
+    if (hasRole('healer')) {
+      actions.push({
+        id: 'healer-acts',
+        icon: '➕', title: 'Healers Choose',
+        desc: 'Wake Healer(s). Ask each to point to a player to heal tonight.'
       });
     }
 
