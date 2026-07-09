@@ -1,5 +1,5 @@
 let timerInterval = null;
-let timerSeconds  = 360;
+let timerSeconds  = 300;
 let timerRunning  = false;
 let carouselActions = [];
 let carouselIndex   = 0;
@@ -275,7 +275,7 @@ function startDayTimer() {
   document.getElementById('timer-wrap').style.display     = 'block';
   document.getElementById('timer-controls').style.display = 'flex';
   document.getElementById('timer-label').textContent      = 'Day Phase Timer';
-  timerSeconds = 360;
+  timerSeconds = 300;
   timerRunning = true;
   updateTimerDisplay();
   clearInterval(timerInterval);
@@ -293,12 +293,11 @@ function startDayTimer() {
 }
 
 function startExtraTimer(seconds) {
-  activeTimerStage = seconds === 120 ? '2min' : '1min';
+  activeTimerStage = '1min';
   document.getElementById('extra-timers').style.display   = 'none';
   document.getElementById('timer-wrap').style.display     = 'block';
   document.getElementById('timer-controls').style.display = 'flex';
-  document.getElementById('timer-label').textContent      =
-    seconds === 120 ? '2 Minute Timer' : '1 Minute Timer';
+  document.getElementById('timer-label').textContent      = '1 Minute Timer';
   timerSeconds = seconds;
   timerRunning = true;
   updateTimerDisplay();
@@ -327,11 +326,11 @@ function updateTimerDisplay() {
 function resetTimer() {
   clearInterval(timerInterval);
   timerRunning  = false;
-  timerSeconds  = 360;
+  timerSeconds  = 300;
   activeTimerStage = 'day';
   const el  = document.getElementById('timer-display');
   const btn = document.getElementById('pause-btn');
-  if (el)  { el.textContent  = '6:00'; el.className = 'timer-display'; }
+  if (el)  { el.textContent  = '5:00'; el.className = 'timer-display'; }
   if (btn) { btn.textContent = '⏸ Pause'; }
   document.getElementById('extra-timers').style.display  = 'none';
   document.getElementById('timer-label').textContent     = 'Day Phase Timer';
@@ -340,7 +339,7 @@ function resetTimer() {
 function clearTimer() {
   clearInterval(timerInterval);
   timerRunning = false;
-  timerSeconds = 360;
+  timerSeconds = 300;
 }
 
 function triggerNextNight() {
@@ -366,9 +365,6 @@ function completeTimer() {
   clearInterval(timerInterval);
   timerRunning = false;
   if (activeTimerStage === 'day') {
-    document.getElementById('extra-timers').style.display = 'none';
-    startExtraTimer(120);
-  } else if (activeTimerStage === '2min') {
     document.getElementById('extra-timers').style.display = 'none';
     startExtraTimer(60);
   } else if (activeTimerStage === '1min') {
