@@ -129,6 +129,15 @@ function buildNightActions(isFirstNight) {
       });
     }
 
+    // Mason — first night only
+    if (hasRole('mason')) {
+      actions.push({
+        id: 'masons-wake',
+        icon: '🧱', title: 'Masons Wake',
+        desc: 'Wake all Masons. Ask them to open their eyes and look around so they learn each other.'
+      });
+    }
+
     // Monk
     if (hasRole('monk')) {
       actions.push({
