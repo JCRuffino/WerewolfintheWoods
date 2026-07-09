@@ -161,7 +161,7 @@ function buildNightActions(isFirstNight) {
       actions.push({
         id: 'fishmonger-acts',
         icon: '🐟', title: 'Fishmonger Acts',
-        desc: 'Wake Fishmonger(s). Ask each to point to two players. Give a yes or no answer.'
+        desc: 'Wake the Fishmonger and ask them to select a player.'
       });
     }
 
@@ -207,7 +207,7 @@ function buildNightActions(isFirstNight) {
       actions.push({
         id: 'fishmonger-acts',
         icon: '🐟', title: 'Fishmonger Acts',
-        desc: 'Wake Fishmonger(s). Ask each to point to two players. Give a yes or no answer.'
+        desc: 'Wake the Fishmonger and ask them to select a player.'
       });
     }
 
