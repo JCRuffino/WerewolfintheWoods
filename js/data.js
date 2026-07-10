@@ -33,11 +33,30 @@ const ROLES = {
 
 /* One rule is drawn at random per day and locked in for the game (state.ghostRules) */
 const GHOST_RULE_POOLS = {
-  1: ['Placeholder day 1'],
-  2: ['Placeholder day 2'],
-  3: ['Placeholder day 3'],
-  4: ['Placeholder day 4'],
-  5: ['Placeholder day 5'],
+  1: [
+    'You can shamble and moan',
+  ],
+  2: [
+    'You can shamble quickly',
+    'You can say one word at night',
+    'You can point at a player in Sanctuary',
+  ],
+  3: [
+    'You can say 5 words at night',
+    'You no longer need to carry a candle',
+    'You can choose one player to stay in Sanctuary today',
+  ],
+  4: [
+    'You can vote',
+    'You can stop an alive player voting',
+    'You can cancel a vote against one player',
+  ],
+  5: [
+    'You can choose to execute the players in quarantine',
+    'You can stop one execution',
+    'You can learn the character of one living player',
+    'You can force a player to go into quarantine',
+  ],
 };
 
 function getRolesInGame() {
