@@ -7,7 +7,7 @@ const ROLES = {
   ],
   minion: [
     { id:'executioner',  name:'Executioner',  icon:'⚖️', cat:'Minion', min:1, max:2, note:'1–2' },
-    { id:'nullifier',    name:'Nullifier',     icon:'🔮', cat:'Minion', min:1, max:2, note:'1–2' },
+    { id:'warlock',      name:'Warlock',       icon:'🔮', cat:'Minion', min:1, max:2, note:'1–2' },
     { id:'shapeshifter', name:'Shapeshifter',  icon:'🌀', cat:'Minion', min:1, max:1, note:'1' },
     { id:'snatcher',     name:'Snatcher',      icon:'🪝', cat:'Minion', min:1, max:2, note:'1–2' },
   ],
@@ -69,7 +69,7 @@ function buildNightActions(isFirstNight) {
   const hasRole = (id) => assigned.some(p => p.alive !== false && p.id === id);
 
   const monsterIds = ['alpha-wolf', 'vampire', 'blob', 'zombie'];
-  const minionIds  = ['executioner', 'nullifier', 'shapeshifter', 'snatcher'];
+  const minionIds  = ['executioner', 'warlock', 'shapeshifter', 'snatcher'];
 
   const livingMonsters = assigned.filter(p => p.alive !== false && monsterIds.includes(p.id));
   const livingMinions  = assigned.filter(p => p.alive !== false && minionIds.includes(p.id));
@@ -121,12 +121,12 @@ function buildNightActions(isFirstNight) {
       });
     }
 
-    // Nullifier — first night only, after minions
-    if (hasRole('nullifier')) {
+    // Warlock — first night only, after minions
+    if (hasRole('warlock')) {
       actions.push({
-        id: 'nullifier-acts',
-        icon: '🔮', title: 'Nullifier Chooses',
-        desc: 'Wake Nullifier(s). Ask each to point to a player to apply their effect to.'
+        id: 'warlock-acts',
+        icon: '🔮', title: 'Warlock Chooses',
+        desc: 'Wake Warlock(s). Ask each to point to a player to apply their effect to.'
       });
     }
 

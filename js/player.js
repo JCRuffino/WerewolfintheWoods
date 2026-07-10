@@ -61,14 +61,14 @@ function openPlayerModal(i) {
     }
   }
 
-  const nullifierBtn = document.getElementById('pm-nullifier-select');
-  const isNullifier  = p.id === 'nullifier';
-  if (nullifierBtn) {
-    nullifierBtn.style.display = (isNullifier && !isGhost) ? 'flex' : 'none';
-    if (isNullifier && !isGhost) {
-      const currentTarget = state.nullifierTargets[i];
-      const nullSub = nullifierBtn.querySelector('.pab-sub');
-      nullSub.textContent = currentTarget !== undefined
+  const warlockBtn = document.getElementById('pm-warlock-select');
+  const isWarlock  = p.id === 'warlock';
+  if (warlockBtn) {
+    warlockBtn.style.display = (isWarlock && !isGhost) ? 'flex' : 'none';
+    if (isWarlock && !isGhost) {
+      const currentTarget = state.warlockTargets[i];
+      const warlockSub = warlockBtn.querySelector('.pab-sub');
+      warlockSub.textContent = currentTarget !== undefined
         ? 'Currently: ' + state.assigned[currentTarget]?.player
         : 'No target set';
     }
@@ -290,14 +290,14 @@ function selectMonkTarget(targetIndex) {
   openPlayerModal(activePlayerIndex);
   renderArena();
 }
-function openNullifierPicker(idx) {
+function openWarlockPicker(idx) {
   activePlayerIndex = idx;
-  openTargetPicker('nullifier-picker-overlay', 'nullifier-picker-list', idx,
-    i => state.nullifierTargets[idx] === i,
+  openTargetPicker('warlock-picker-overlay', 'warlock-picker-list', idx,
+    i => state.warlockTargets[idx] === i,
     i => {
-      state.nullifierTargets[idx] = i;
+      state.warlockTargets[idx] = i;
       saveState();
-      document.getElementById('nullifier-picker-overlay').classList.remove('open');
+      document.getElementById('warlock-picker-overlay').classList.remove('open');
       openPlayerModal(idx);
       renderArena();
     });
@@ -600,7 +600,7 @@ function applyCharacterChange(idx, role) {
   delete state.farmerSelections[idx];
   delete state.knightTargets[idx];
   delete state.taxCollectorTargets[idx];
-  delete state.nullifierTargets[idx];
+  delete state.warlockTargets[idx];
 
   p.id             = role.id;
   p.role           = role.name;

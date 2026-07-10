@@ -253,10 +253,10 @@
     <div class="pab-sub">Choose a player to protect</div>
   </div>
 </button>
-<button class="pm-action-btn" id="pm-nullifier-select" onclick="openNullifierPicker(activePlayerIndex)" style="display:none">
+<button class="pm-action-btn" id="pm-warlock-select" onclick="openWarlockPicker(activePlayerIndex)" style="display:none">
   <span class="pab-icon">🔮</span>
   <div>
-    <div class="pab-label">Set Nullifier Target</div>
+    <div class="pab-label">Set Warlock Target</div>
     <div class="pab-sub">No target set</div>
   </div>
 </button>
@@ -343,14 +343,14 @@
   </div>
 </div>
 
-<!-- Nullifier picker -->
-<div class="modal-overlay" id="nullifier-picker-overlay">
+<!-- Warlock picker -->
+<div class="modal-overlay" id="warlock-picker-overlay">
   <div class="modal-box farmer-picker-box">
-    <h3>🔮 Nullifier Target</h3>
-    <p>Choose the player this Nullifier is affecting.</p>
-    <div class="farmer-picker-list" id="nullifier-picker-list"></div>
+    <h3>🔮 Warlock Target</h3>
+    <p>Choose the player this Warlock is affecting.</p>
+    <div class="farmer-picker-list" id="warlock-picker-list"></div>
     <button class="btn btn-ghost-style btn-full" style="margin-top:12px"
-      onclick="document.getElementById('nullifier-picker-overlay').classList.remove('open')">
+      onclick="document.getElementById('warlock-picker-overlay').classList.remove('open')">
       Cancel
     </button>
   </div>

@@ -12,7 +12,7 @@ let state = {
   round:                1,
   phase:                'night',
   monkProtections:      {},
-  nullifierTargets:     {},
+  warlockTargets:     {},
   farmerSelections:     {},
   knightTargets:        {},
   knightReminderPending: false,
@@ -37,7 +37,7 @@ function resetState() {
   state.round                 = 1;
   state.phase                 = 'night';
   state.monkProtections       = {};
-  state.nullifierTargets      = {};
+  state.warlockTargets      = {};
   state.farmerSelections      = {};
   state.knightTargets         = {};
   state.knightReminderPending = false;

@@ -79,7 +79,7 @@ Once `assignRoles()` runs, the app moves into `js/game.js` territory:
 
 - `renderArena()` lays players out in an arc and renders each as a "token" — an icon,
   name, and a stack of status overlays (ghost, monk-protected, farmer-watched,
-  nullified, quarantined) plus small icons flanking the name for knight-protection
+  warlocked, quarantined) plus small icons flanking the name for knight-protection
   (⚔️) and lovers (💘). It's rebuilt from `state` on every change; there's no
   incremental diffing.
 - The night phase is driven by `buildNightActions()` in `js/data.js`, which inspects
@@ -95,7 +95,7 @@ Once `assignRoles()` runs, the app moves into `js/game.js` territory:
 
 ### Per-role "target" maps
 
-Several roles (Monk, Farmer, Knight, Executioner, Nullifier) choose another player
+Several roles (Monk, Farmer, Knight, Executioner, Warlock) choose another player
 each night. Rather than storing that on the player object, it's kept in a map on
 `state` keyed by the *acting* player's index → target index (e.g.
 `state.monkProtections[monkIdx] = targetIdx`). `renderArena()` and the player modal

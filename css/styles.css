@@ -381,8 +381,8 @@ input[type="text"]::placeholder { color: var(--muted); }
   box-shadow: 0 0 0 5px #7ed957, 0 0 12px rgba(126,217,87,.4), 0 2px 12px rgba(0,0,0,.4);
 }
 
-/* ── Nullifier ring (purple) ── */
-.player-token.alive.nullified .token-dot {
+/* ── Warlock ring (purple) ── */
+.player-token.alive.warlocked .token-dot {
   box-shadow: 0 0 0 5px #9b59b6, 0 0 12px rgba(155,89,182,.4), 0 2px 12px rgba(0,0,0,.4);
 }
 
@@ -395,8 +395,8 @@ input[type="text"]::placeholder { color: var(--muted); }
     0 2px 12px rgba(0,0,0,.4);
 }
 
-/* ── Monk + Nullifier ── */
-.player-token.alive.monk-protected.nullified .token-dot {
+/* ── Monk + Warlock ── */
+.player-token.alive.monk-protected.warlocked .token-dot {
   box-shadow:
     0 0 0 5px #f5c842,
     0 0 0 10px #9b59b6,
@@ -404,8 +404,8 @@ input[type="text"]::placeholder { color: var(--muted); }
     0 2px 12px rgba(0,0,0,.4);
 }
 
-/* ── Farmer + Nullifier ── */
-.player-token.alive.farmer-watched.nullified .token-dot {
+/* ── Farmer + Warlock ── */
+.player-token.alive.farmer-watched.warlocked .token-dot {
   box-shadow:
     0 0 0 5px #7ed957,
     0 0 0 10px #9b59b6,
@@ -414,7 +414,7 @@ input[type="text"]::placeholder { color: var(--muted); }
 }
 
 /* ── All three ── */
-.player-token.alive.monk-protected.farmer-watched.nullified .token-dot {
+.player-token.alive.monk-protected.farmer-watched.warlocked .token-dot {
   box-shadow:
     0 0 0 5px #f5c842,
     0 0 0 10px #7ed957,
@@ -792,8 +792,8 @@ input[type="text"]::placeholder { color: var(--muted); }
   padding: 6px 2px 4px;
 }
 
-/* ── Nullifier pip ── */
-.token-nullifier-pip {
+/* ── Warlock pip ── */
+.token-warlock-pip {
   position: absolute;
   top: -20px;
   right: -8px;

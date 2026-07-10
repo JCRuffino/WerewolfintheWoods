@@ -60,11 +60,11 @@ function renderArena() {
     monkWatching[targetIdx] = true;
   });
 
-  const nullifierWatching = {};
-  Object.entries(state.nullifierTargets).forEach(([nullIdx, targetIdx]) => {
-    const null_ = state.assigned[nullIdx];
-    if (!null_ || null_.alive === false) return;
-    nullifierWatching[targetIdx] = true;
+  const warlockWatching = {};
+  Object.entries(state.warlockTargets).forEach(([warlockIdx, targetIdx]) => {
+    const warlock_ = state.assigned[warlockIdx];
+    if (!warlock_ || warlock_.alive === false) return;
+    warlockWatching[targetIdx] = true;
   });
 
   const knightWatching = {};
@@ -96,7 +96,7 @@ function renderArena() {
       const isGhost         = p.alive === false;
       const status          = isGhost ? 'ghost' : 'alive';
       const isMonkProtected   = !!monkWatching[i];
-      const isNullified       = !!nullifierWatching[i];
+      const isWarlocked       = !!warlockWatching[i];
       const farmers           = farmerWatching[i] || [];
       const isFarmerWatched   = farmers.length > 0;
       const isQuarantined     = !!state.quarantined[i];
@@ -118,7 +118,7 @@ function renderArena() {
         (isMonkProtected && !isGhost ? ' monk-protected' : '') +
         (isFarmerWatched && !isGhost ? ' farmer-watched' : '') +
         (isQuarantined               ? ' quarantined'    : '') +
-        (isNullified     && !isGhost ? ' nullified'      : '');
+        (isWarlocked     && !isGhost ? ' warlocked'      : '');
 
       token.style.left = x + 'px';
       token.style.top  = y + 'px';
@@ -135,7 +135,7 @@ function renderArena() {
           '<span class="token-ghost-overlay">👻</span>' +
           (isMonkProtected && !isGhost ? '<span class="token-halo">😇</span>'          : '') +
           (isFarmerWatched && !isGhost ? '<span class="token-farmer-pip">🌾</span>'    : '') +
-          (isNullified     && !isGhost ? '<span class="token-nullifier-pip">🔮</span>' : '') +
+          (isWarlocked     && !isGhost ? '<span class="token-warlock-pip">🔮</span>' : '') +
           '<span class="token-quarantine"></span>' +
         '</div>' +
         '<div class="token-name">' + nameHtml + '</div>' +
