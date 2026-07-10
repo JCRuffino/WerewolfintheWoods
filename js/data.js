@@ -20,7 +20,7 @@ const ROLES = {
   villager: [
     { id:'healer',     name:'Healer',     icon:'➕', cat:'Villager', min:1, max:2, note:'1–2' },
     { id:'farmer',     name:'Farmer',     icon:'🌾', cat:'Villager', min:1, max:2, note:'1–2' },
-    { id:'fishmonger', name:'Fishmonger', icon:'🐟', cat:'Villager', min:1, max:2, note:'1–2' },
+    { id:'fishmonger', name:'Fishmonger', icon:'🐟', cat:'Villager', min:1, max:4, note:'1–4' },
     { id:'hero',       name:'Hero',       icon:'🦸', cat:'Villager', min:1, max:2, note:'1–2' },
     { id:'hunter',     name:'Hunter',     icon:'🏹', cat:'Villager', min:1, max:2, note:'1–2' },
     { id:'knight',     name:'Knight',     icon:'⚔️', cat:'Villager', min:1, max:2, note:'1–2' },
