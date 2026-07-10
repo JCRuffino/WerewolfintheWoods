@@ -765,7 +765,7 @@ function markPlayerDead(idx, method) {
   saveState();
   document.getElementById('kill-modal-overlay').classList.remove('open');
   closePlayerModal();
-  if (!checkLoneWolfWin()) checkEvilWin();
+  checkEvilWin();
   renderArena();
 }
 
@@ -781,6 +781,7 @@ function checkEvilWin() {
   }
 }
 
+/* Called when the game enters the night phase, not at the moment of death */
 function checkLoneWolfWin() {
   const livingMonsters = state.assigned.filter(p => p.alive !== false && p.cat === 'Monster');
   if (livingMonsters.length === 1 && livingMonsters[0].id === 'lone-wolf') {

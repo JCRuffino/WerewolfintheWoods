@@ -392,6 +392,8 @@ function triggerNextNight() {
   updatePhaseLabel();
   setGameBottomState('night-btn');
 
+  checkLoneWolfWin();
+
   if (state.round === 4) {
     const livingLiar = state.assigned.find(p => p.alive !== false && p.id === 'liar');
     if (livingLiar) {
