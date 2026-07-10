@@ -11,3 +11,10 @@ function showScreen(id) {
   document.getElementById(id).classList.add('active');
   window.scrollTo(0, 0);
 }
+
+/* Trap the browser/hardware back button so it can't exit the app —
+   navigation happens only through the app's own back buttons */
+history.pushState(null, '', location.href);
+window.addEventListener('popstate', () => {
+  history.pushState(null, '', location.href);
+});
