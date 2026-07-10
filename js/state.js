@@ -17,6 +17,7 @@ let state = {
   knightTargets:        {},
   knightReminderPending: false,
   taxCollectorTargets:  {},
+  cobblerTargets:       {},
   quarantined:          {},
   lovers:               [],
   weaverAssignments:    {},
@@ -42,6 +43,7 @@ function resetState() {
   state.knightTargets         = {};
   state.knightReminderPending = false;
   state.taxCollectorTargets   = {};
+  state.cobblerTargets        = {};
   state.quarantined           = {};
   state.lovers                = [];
   state.weaverAssignments     = {};

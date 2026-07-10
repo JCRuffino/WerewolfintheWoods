@@ -74,6 +74,13 @@ function renderArena() {
     knightWatching[targetIdx] = true;
   });
 
+  const cobblerWatching = {};
+  Object.entries(state.cobblerTargets).forEach(([cobblerIdx, targetIdx]) => {
+    const cobbler = state.assigned[cobblerIdx];
+    if (!cobbler || cobbler.alive === false) return;
+    cobblerWatching[targetIdx] = true;
+  });
+
   requestAnimationFrame(() => {
     const W  = arena.offsetWidth  || window.innerWidth;
     const H  = arena.offsetHeight || 300;
@@ -101,6 +108,7 @@ function renderArena() {
       const isFarmerWatched   = farmers.length > 0;
       const isQuarantined     = !!state.quarantined[i];
       const isKnightProtected = !!knightWatching[i] && !isGhost;
+      const isCobblerTarget   = !!cobblerWatching[i] && !isGhost;
       const isLover           = state.lovers.includes(i) && !isGhost;
 
       let teamClass = 'team-good';
@@ -127,7 +135,8 @@ function renderArena() {
 
       const heartIcon = isLover           ? '<span class="token-heart-icon">💘</span>' : '';
       const swordIcon = isKnightProtected ? '<span class="token-sword-icon">⚔️</span>' : '';
-      const nameHtml  = heartIcon + swordIcon + escHtml(p.player) + swordIcon + heartIcon;
+      const shoeIcon  = isCobblerTarget   ? '<span class="token-shoe-icon">👞</span>' : '';
+      const nameHtml  = heartIcon + swordIcon + shoeIcon + escHtml(p.player) + shoeIcon + swordIcon + heartIcon;
 
       token.innerHTML =
         '<div class="token-dot">' +

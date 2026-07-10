@@ -93,6 +93,18 @@ function openPlayerModal(i) {
     }
   }
 
+  const cobblerBtn = document.getElementById('pm-cobbler-select');
+  if (cobblerBtn) {
+    if (p.id === 'cobbler' && !isGhost) {
+      cobblerBtn.style.display = 'flex';
+      const target     = state.cobblerTargets[i];
+      const targetName = target !== undefined ? state.assigned[target]?.player : 'None';
+      cobblerBtn.querySelector('.pab-sub').textContent = 'Currently: ' + targetName;
+    } else {
+      cobblerBtn.style.display = 'none';
+    }
+  }
+
   const matchmakerBtn = document.getElementById('pm-matchmaker-set');
   if (matchmakerBtn) {
     if (p.id === 'matchmaker' && !isGhost) {
@@ -357,6 +369,7 @@ function toggleQuarantine(idx) {
     state.quarantined[idx] = true;
     checkExecutionerReminder(idx);
     checkSnatcherReminder(idx);
+    checkCobblerReminder(idx);
   }
   saveState();
   closePlayerModal();
@@ -396,6 +409,22 @@ function checkSnatcherReminder(targetIdx) {
   }
 }
 
+function checkCobblerReminder(targetIdx) {
+  const target = state.assigned[targetIdx];
+  if (!target) return;
+  Object.entries(state.cobblerTargets).forEach(([cobblerIdx, tIdx]) => {
+    if (parseInt(tIdx) !== targetIdx) return;
+    const cobbler = state.assigned[cobblerIdx];
+    if (!cobbler || cobbler.alive === false) return;
+    showReminder(
+      '👞 Cobbler — ' + target.player + ' quarantined',
+      cobbler.player + ' is the Cobbler and chose ' + target.player +
+      '. The Cobbler must be executed. Tap OK then mark them as dead.',
+      () => openKillModal(parseInt(cobblerIdx))
+    );
+  });
+}
+
 const reminderQueue = [];
 let reminderShowing = false;
 
@@ -429,6 +458,18 @@ function openTaxCollectorPicker(collectorIdx) {
       saveState();
       document.getElementById('tax-picker-overlay').classList.remove('open');
       openPlayerModal(collectorIdx);
+      renderArena();
+    });
+}
+
+function openCobblerPicker(cobblerIdx) {
+  openTargetPicker('cobbler-picker-overlay', 'cobbler-picker-list', cobblerIdx,
+    i => state.cobblerTargets[cobblerIdx] === i,
+    i => {
+      state.cobblerTargets[cobblerIdx] = i;
+      saveState();
+      document.getElementById('cobbler-picker-overlay').classList.remove('open');
+      openPlayerModal(cobblerIdx);
       renderArena();
     });
 }
@@ -601,6 +642,7 @@ function applyCharacterChange(idx, role) {
   delete state.knightTargets[idx];
   delete state.taxCollectorTargets[idx];
   delete state.warlockTargets[idx];
+  delete state.cobblerTargets[idx];
 
   p.id             = role.id;
   p.role           = role.name;
@@ -659,6 +701,7 @@ function markPlayerDead(idx, method) {
   p.deathMethod = method;
   delete state.quarantined[idx];
   delete state.taxCollectorTargets[idx];
+  delete state.cobblerTargets[idx];
 
   // Monk — save history before deleting
   if (p.id === 'monk') {

@@ -475,7 +475,7 @@ input[type="text"]::placeholder { color: var(--muted); }
   transition: opacity .3s;
 }
 
-.token-heart-icon, .token-sword-icon {
+.token-heart-icon, .token-sword-icon, .token-shoe-icon {
   font-size: .7rem;
 }
 

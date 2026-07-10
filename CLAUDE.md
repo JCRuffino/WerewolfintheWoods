@@ -95,7 +95,7 @@ Once `assignRoles()` runs, the app moves into `js/game.js` territory:
 
 ### Per-role "target" maps
 
-Several roles (Monk, Farmer, Knight, Executioner, Warlock) choose another player
+Several roles (Monk, Farmer, Knight, Executioner, Warlock, Cobbler) choose another player
 each night. Rather than storing that on the player object, it's kept in a map on
 `state` keyed by the *acting* player's index → target index (e.g.
 `state.monkProtections[monkIdx] = targetIdx`). `renderArena()` and the player modal

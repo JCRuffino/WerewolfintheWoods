@@ -216,7 +216,7 @@ function buildNightActions(isFirstNight) {
       actions.push({
         id: 'cobbler-reminder',
         icon: '👞', title: 'Cobbler Reminder',
-        desc: 'Remind yourself of the Cobbler\'s effect before the day phase begins.'
+        desc: 'The Cobbler selects a player.'
       });
     }
 
@@ -317,7 +317,7 @@ function buildNightActions(isFirstNight) {
       actions.push({
         id: 'cobbler-reminder',
         icon: '👞', title: 'Cobbler Reminder',
-        desc: 'Remind yourself of the Cobbler\'s effect before the day phase begins.'
+        desc: 'The Cobbler selects a player.'
       });
     }
   }

@@ -274,6 +274,13 @@
           <div class="pab-sub">Choose a player to watch</div>
         </div>
       </button>
+      <button class="pm-action-btn" id="pm-cobbler-select" onclick="openCobblerPicker(activePlayerIndex)" style="display:none">
+        <span class="pab-icon">👞</span>
+        <div>
+          <div class="pab-label">Set Cobbler Target</div>
+          <div class="pab-sub">Currently: None</div>
+        </div>
+      </button>
     <button class="pm-action-btn" id="pm-executioner-target" onclick="openTaxCollectorPicker(activePlayerIndex)" style="display:none">
   <span class="pab-icon">⚖️</span>
   <div>
@@ -406,6 +413,19 @@
     <div class="farmer-picker-list" id="knight-picker-list"></div>
     <button class="btn btn-ghost-style btn-full" style="margin-top:12px"
       onclick="document.getElementById('modal-knight-picker').classList.remove('open')">
+      Cancel
+    </button>
+  </div>
+</div>
+
+<!-- Cobbler picker -->
+<div class="modal-overlay" id="cobbler-picker-overlay">
+  <div class="modal-box farmer-picker-box">
+    <h3>👞 Cobbler Target</h3>
+    <p>Choose the player this Cobbler selects.</p>
+    <div class="farmer-picker-list" id="cobbler-picker-list"></div>
+    <button class="btn btn-ghost-style btn-full" style="margin-top:12px"
+      onclick="document.getElementById('cobbler-picker-overlay').classList.remove('open')">
       Cancel
     </button>
   </div>
