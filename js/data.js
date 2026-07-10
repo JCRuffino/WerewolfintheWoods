@@ -68,7 +68,7 @@ function buildNightActions(isFirstNight) {
 
   const hasRole = (id) => assigned.some(p => p.alive !== false && p.id === id);
 
-  const monsterIds = ['alpha-wolf', 'vampire', 'blob', 'zombie'];
+  const monsterIds = ['alpha-wolf', 'vampire', 'blob', 'zombie', 'lone-wolf', 'thrall'];
   const minionIds  = ['executioner', 'warlock', 'shapeshifter', 'snatcher'];
 
   const livingMonsters = assigned.filter(p => p.alive !== false && monsterIds.includes(p.id));

@@ -585,6 +585,7 @@ function openChangeCharacterPicker(idx) {
   const allRoles = [
     ...ROLES.monster,
     { id:'lone-wolf', name:'Lone Wolf', icon:'🌕', cat:'Monster' },
+    { id:'thrall',    name:'Thrall',    icon:'⛓️', cat:'Monster' },
     ...ROLES.minion,
     ...ROLES.outcast,
     ...ROLES.villager,
