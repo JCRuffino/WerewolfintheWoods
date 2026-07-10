@@ -741,6 +741,13 @@ function markPlayerDead(idx, method) {
     }
   });
 
+  if (p.id === 'hero' && method === 'killed') {
+    showReminder(
+      '🦸 Hero Killed!',
+      'The hero has been killed, time for a death scene.'
+    );
+  }
+
   if (state.lovers.includes(idx)) {
     const otherIdx = state.lovers.find(x => x !== idx);
     const other    = state.assigned[otherIdx];
