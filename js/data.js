@@ -239,15 +239,6 @@ function buildNightActions(isFirstNight) {
       });
     }
 
-    // Monk (recurring)
-    if (hasRole('monk')) {
-      actions.push({
-        id: 'monk-acts',
-        icon: '🧘', title: 'Monks Choose',
-        desc: 'Wake Monk(s). Ask each to point to a player to protect tonight.'
-      });
-    }
-
     // Healer (recurring from night 2)
     if (hasRole('healer')) {
       actions.push({
