@@ -246,6 +246,12 @@ function togglePlayerStatus() {
   renderArena();
 }
 
+function showCharacterFromGame(idx) {
+  if (idx === null || idx === undefined) return;
+  closePlayerModal();
+  revealRole(idx, 'screen-game');
+}
+
 function openKillModal(idx) {
   if (idx === null || idx === undefined) return;
   activePlayerIndex = idx;

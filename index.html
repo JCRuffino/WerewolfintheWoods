@@ -134,7 +134,7 @@
   <div class="reveal-cat"    id="reveal-cat"></div>
   <div class="sri-shapeshifter-warning" id="reveal-shapeshifter-warning" style="display:none">🌀 A Shapeshifter is in play</div>
   <div class="sri-blob-warning" id="reveal-blob-warning" style="display:none">🟢 The Blob is in play</div>
-  <button class="btn btn-ghost-style mt-auto" style="width:100%;max-width:320px;"
+  <button class="btn btn-ghost-style mt-auto" id="reveal-back-btn" style="width:100%;max-width:320px;"
           onclick="showScreen('screen-showroles')">← Back</button>
 </div>
 
@@ -244,6 +244,13 @@
         <div>
           <div class="pab-label">Change Character</div>
           <div class="pab-sub">Assign a new role mid-game</div>
+        </div>
+      </button>
+      <button class="pm-action-btn" id="pm-show-character" onclick="showCharacterFromGame(activePlayerIndex)">
+        <span class="pab-icon">🎭</span>
+        <div>
+          <div class="pab-label">Show Character</div>
+          <div class="pab-sub">Full-screen reveal for this player</div>
         </div>
       </button>
   <button class="pm-action-btn" id="pm-monk-protect" onclick="openMonkTargetPicker()" style="display:none">

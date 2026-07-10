@@ -502,8 +502,10 @@ function renderShowRoles() {
   });
 }
 
-function revealRole(i) {
+function revealRole(i, backTo) {
   const e = state.assigned[i];
+  document.getElementById('reveal-back-btn').onclick =
+    () => showScreen(backTo || 'screen-showroles');
   document.getElementById('reveal-icon').textContent   = e.icon;
   document.getElementById('reveal-player').textContent = e.player;
   document.getElementById('reveal-role').textContent   = e.role;
