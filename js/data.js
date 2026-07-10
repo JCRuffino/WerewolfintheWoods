@@ -31,6 +31,15 @@ const ROLES = {
   ],
 };
 
+/* One rule is drawn at random per day and locked in for the game (state.ghostRules) */
+const GHOST_RULE_POOLS = {
+  1: ['Placeholder day 1'],
+  2: ['Placeholder day 2'],
+  3: ['Placeholder day 3'],
+  4: ['Placeholder day 4'],
+  5: ['Placeholder day 5'],
+};
+
 function getRolesInGame() {
   return state.assigned.map(p => p.id);
 }

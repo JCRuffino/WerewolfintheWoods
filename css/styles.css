@@ -814,3 +814,47 @@ input[type="text"]::placeholder { color: var(--muted); }
 .sri-blob-warning         { color: #7ed957; }
 #screen-reveal .sri-shapeshifter-warning,
 #screen-reveal .sri-blob-warning { font-size: 1.5rem; }
+
+/* ── Ghost rules ── */
+.ghost-menu-btn {
+  margin-right: auto;
+  padding: 4px 12px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-size: .8rem; font-weight: 700;
+  cursor: pointer;
+  transition: border-color .2s;
+}
+.ghost-menu-btn:hover { border-color: #a78bfa; }
+
+.ghost-day-list {
+  display: flex; flex-direction: column; gap: 10px;
+  margin-top: 8px;
+}
+.ghost-day-btn {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 14px 18px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--text);
+  font-size: 1rem; font-weight: 700;
+  cursor: pointer;
+  transition: border-color .2s, background .2s;
+}
+.ghost-day-btn:hover { border-color: #a78bfa; }
+.ghost-day-btn.locked {
+  border-color: #a78bfa;
+  background: rgba(167,139,250,.08);
+}
+
+.ghost-rule-box {
+  margin-top: 14px; padding: 16px;
+  border-radius: var(--radius);
+  border: 1px solid #a78bfa;
+  background: rgba(167,139,250,.06);
+}
+.ghost-rule-day  { font-weight: 800; color: #a78bfa; margin-bottom: 6px; }
+.ghost-rule-text { color: var(--text); line-height: 1.5; }

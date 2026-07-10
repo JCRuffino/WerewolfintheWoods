@@ -20,6 +20,7 @@ let state = {
   quarantined:          {},
   lovers:               [],
   weaverAssignments:    {},
+  ghostRules:           {},
 };
 
 function resetState() {
@@ -44,6 +45,7 @@ function resetState() {
   state.quarantined           = {};
   state.lovers                = [];
   state.weaverAssignments     = {};
+  state.ghostRules            = {};
 }
 
 function assignedCountSingle(type) {

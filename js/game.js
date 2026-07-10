@@ -342,6 +342,39 @@ function clearTimer() {
   timerSeconds = 300;
 }
 
+/* ── Ghost rules menu ── */
+function openGhostMenu() {
+  renderGhostMenu();
+  document.getElementById('ghost-rule-box').style.display = 'none';
+  showScreen('screen-ghost');
+}
+
+function renderGhostMenu() {
+  const list = document.getElementById('ghost-day-list');
+  list.innerHTML = '';
+  for (let day = 1; day <= 5; day++) {
+    const locked = state.ghostRules[day] !== undefined;
+    const btn = document.createElement('button');
+    btn.className = 'ghost-day-btn' + (locked ? ' locked' : '');
+    btn.innerHTML = '<span>Day ' + day + '</span>' + (locked ? '<span>🔒</span>' : '');
+    btn.onclick = () => selectGhostDay(day);
+    list.appendChild(btn);
+  }
+}
+
+function selectGhostDay(day) {
+  if (state.ghostRules[day] === undefined) {
+    const pool = GHOST_RULE_POOLS[day] || [];
+    if (pool.length === 0) return;
+    state.ghostRules[day] = pool[Math.floor(Math.random() * pool.length)];
+    saveState();
+    renderGhostMenu();
+  }
+  document.getElementById('ghost-rule-day').textContent   = 'Day ' + day;
+  document.getElementById('ghost-rule-text').textContent  = state.ghostRules[day];
+  document.getElementById('ghost-rule-box').style.display = 'block';
+}
+
 function triggerNextNight() {
   clearTimer();
   state.round++;
